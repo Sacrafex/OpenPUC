@@ -1,4 +1,5 @@
 # Robot Control Documentation
+We are looking for contributors! Please make a pull request if you have additions.
 
 ## Definitions
 
