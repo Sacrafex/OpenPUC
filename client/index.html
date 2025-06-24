@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>OpenPUC - Client System</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            background-color: #121212;
+            color: white;
+        }
+        #header {
+            background-color: #1e1e1e;
+            color: #bb86fc;
+            padding: 10px;
+            text-align: center;
+        }
+        #main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+        }
+        #project-selection {
+            margin-bottom: 20px;
+        }
+        #projects {
+            margin-top: 20px;
+        }
+        button {
+            background-color: #333;
+            color: #bb86fc;
+            border: none;
+            padding: 10px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #444;
+        }
+        .project-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div id="header">
+        <h1>OpenPUC</h1>
+        <p id="private-ip">Fetching...</p>
+        <p id="host-status">Host Status: Not Connected</p>
+    </div>
+    <div id="main">
+        <div id="project-selection">
+            <h2>Add a Project</h2>
+            <button onclick="selectFolder()">Select Folder</button>
+        </div>
+        <div id="projects">
+            <h2>Projects</h2>
+            <ul id="project-list"></ul>
+        </div>
+    </div>
+    <script>
+        const { ipcRenderer } = require('electron');
+        const os = require('os');
+
+        function selectFolder() {
+            ipcRenderer.send('select-folder');
+        }
+
+        ipcRenderer.on('folder-selected', (event, folderPath) => {
+            addProject(folderPath);
+            saveProjects();
+        });
+
+        ipcRenderer.on('port-info', (event, port) => {
+            const privateIP = getPrivateIP();
+            document.getElementById('private-ip').textContent = `Connection: ${privateIP}:${port}`;
+        });
+
+        function addProject(folderPath) {
+            const projectList = document.getElementById('project-list');
+            const listItem = document.createElement('li');
+            listItem.className = 'project-item';
+            const projectText = document.createElement('span');
+            projectText.textContent = folderPath;
+            const closeButton = document.createElement('button');
+            closeButton.textContent = 'Close';
+            closeButton.onclick = () => {
+                projectList.removeChild(listItem);
+                saveProjects();
+            };
+            listItem.appendChild(projectText);
+            listItem.appendChild(closeButton);
+            projectList.appendChild(listItem);
+        }
+
+        function saveProjects() {
+            const projectList = document.getElementById('project-list');
+            const projects = [];
+            projectList.querySelectorAll('.project-item span').forEach(item => {
+                projects.push(item.textContent);
+            });
+            localStorage.setItem('projects', JSON.stringify(projects));
+        }
+
+        function loadProjects() {
+            const projects = JSON.parse(localStorage.getItem('projects') || '[]');
+            projects.forEach(addProject);
+        }
+
+        function getPrivateIP() {
+            const interfaces = os.networkInterfaces();
+            for (const name of Object.keys(interfaces)) {
+                for (const iface of interfaces[name]) {
+                    if (iface.family === 'IPv4' && !iface.internal) {
+                        return iface.address;
+                    }
+                }
+            }
+            return 'Unavailable';
+        }
+
+        ipcRenderer.on('host-status', (event, status) => {
+            const hostStatus = document.getElementById('host-status');
+            hostStatus.textContent = `Host Status: ${status.connected ? `Connected to ${status.hostIP}` : 'Not Connected'}`;
+        });
+
+        loadProjects();
+    </script>
+</body>
+</html>

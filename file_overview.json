@@ -1,0 +1,10 @@
+{
+  "host": {
+    "package.json": "Defines the dependencies and scripts for the Host Electron app.",
+    "main.js": "Contains the main logic for the Host Electron app, including WebSocket server setup."
+  },
+  "vscode-extension": {
+    "package.json": "Defines the dependencies and scripts for the VS Code extension.",
+    "extension.js": "Contains the activation logic for the VS Code extension, including commands for connecting to the Host."
+  }
+}

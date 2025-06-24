@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>OpenPUC - Host System</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            background-color: #121212;
+            color: white;
+        }
+        #header {
+            background-color: #1e1e1e;
+            color: #bb86fc;
+            padding: 10px;
+            text-align: center;
+        }
+        #main {
+            flex: 1;
+            display: flex;
+            flex-direction: row;
+        }
+        #client-menu {
+            width: 20%;
+            background-color: #1e1e1e;
+            border-right: 1px solid #333;
+            overflow-y: auto;
+            padding: 10px;
+        }
+        .client {
+            padding: 10px;
+            margin: 5px 0;
+            cursor: pointer;
+            color: white;
+            text-align: center;
+        }
+        .client.available {
+            background-color: #03dac6;
+        }
+        .client.unavailable {
+            background-color: #cf6679;
+        }
+        #file-view {
+            flex: 1;
+            padding: 10px;
+            overflow-y: auto;
+            background-color: #121212;
+        }
+        #file-list {
+            width: 20%;
+            background-color: #1e1e1e;
+            border-left: 1px solid #333;
+            overflow-y: auto;
+            padding: 10px;
+        }
+        .file {
+            padding: 10px;
+            margin: 5px 0;
+            cursor: pointer;
+            background-color: #333;
+            border: 1px solid #444;
+            color: #bb86fc;
+        }
+        #bottom-bar {
+            background-color: #1e1e1e;
+            color: #bb86fc;
+            padding: 10px;
+            text-align: center;
+            display: flex;
+            justify-content: space-around;
+        }
+        #bottom-bar button {
+            background-color: #333;
+            color: #bb86fc;
+            border: none;
+            padding: 10px;
+            cursor: pointer;
+        }
+        #bottom-bar button:hover {
+            background-color: #444;
+        }
+    </style>
+</head>
+<body>
+    <div id="header">
+        <h1>OpenPUC - Host System</h1>
+    </div>
+    <div id="main">
+        <div id="client-menu">
+            <!-- Clients Go Here -->
+        </div>
+        <div id="file-view">
+            <h2>File View</h2>
+            <p>Select a client and file to view/edit.</p>
+        </div>
+        <div id="file-list">
+            <!-- Files Go Here -->
+        </div>
+    </div>
+    <div id="bottom-bar">
+        <button onclick="disconnectAll()">Disconnect All</button>
+        <button onclick="connectAll()">Connect All</button>
+        <button onclick="reloadApp()">Reload App</button>
+    </div>
+
+    <script>
+        const clientMenu = document.getElementById('client-menu');
+        const fileList = document.getElementById('file-list');
+        const fileView = document.getElementById('file-view');
+
+        function loadClients() {
+            const savedClients = JSON.parse(localStorage.getItem('clients')) || [];
+            savedClients.forEach(client => {
+                addClientToUI(client.name, client.available);
+            });
+        }
+
+        function saveClients() {
+            const clients = Array.from(clientMenu.children).map(client => ({
+                name: client.textContent,
+                available: client.classList.contains('available')
+            }));
+            localStorage.setItem('clients', JSON.stringify(clients));
+        }
+
+        function addClient(name, available) {
+            addClientToUI(name, available);
+            saveClients();
+        }
+
+        function addClientToUI(name, available) {
+            const clientDiv = document.createElement('div');
+            clientDiv.className = `client ${available ? 'available' : 'unavailable'}`;
+            clientDiv.textContent = name;
+            clientDiv.onclick = () => loadFilesForClient(name);
+            clientMenu.appendChild(clientDiv);
+        }
+
+        function loadFilesForClient(clientName) {
+            fileList.innerHTML = '';
+            fileView.innerHTML = `<h2>Viewing files for ${clientName}</h2>`;
+
+            // Remove Later, *Just for testing
+            const files = ['file1.txt', 'file2.js', 'file3.html'];
+            files.forEach(file => {
+                const fileDiv = document.createElement('div');
+                fileDiv.className = 'file';
+                fileDiv.textContent = file;
+                fileDiv.onclick = () => viewFile(clientName, file);
+                fileList.appendChild(fileDiv);
+            });
+        }
+
+        function viewFile(clientName, fileName) {
+            fileView.innerHTML = `<h2>Editing ${fileName} for ${clientName}</h2>`;
+            fileView.innerHTML += '<textarea style="width: 100%; height: 80%;"></textarea>';
+        }
+
+        function disconnectAll() {
+            alert('Disconnecting all clients...');
+        }
+
+        function connectAll() {
+            alert('Connecting all clients...');
+        }
+
+        function reloadApp() {
+            location.reload();
+        }
+
+        window.onload = loadClients;
+    </script>
+</body>
+</html>

@@ -1,0 +1,16 @@
+{
+  "name": "host-app",
+  "version": "1.0.0",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "dependencies": {
+    "electron": "^25.0.0",
+    "ws": "^8.0.0"
+  },
+  "engines": {
+    "node": ">=14.0.0",
+    "vscode": "^1.80.0"
+  }
+}
