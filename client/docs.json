@@ -2,7 +2,6 @@
   "categories": {
     "motor_control": {
       "name": "Motor Control",
-      "icon": "⚙️",
       "items": [
         {
           "title": "Basic Motor Setup",
@@ -22,7 +21,6 @@
     },
     "sensors": {
       "name": "Sensors",
-      "icon": "🌡",
       "items": [
         {
           "title": "Encoder Reading",
@@ -42,7 +40,6 @@
     },
     "drivetrain": {
       "name": "Drivetrain",
-      "icon": "🛞",
       "items": [
         {
           "title": "Tank Drive",
@@ -62,7 +59,6 @@
     },
     "autonomous": {
       "name": "Autonomous",
-      "icon": "🤖",
       "items": [
         {
           "title": "Simple Timed Auto",
@@ -82,7 +78,6 @@
     },
     "vision": {
       "name": "Vision Processing",
-      "icon": "👁️",
       "items": [
         {
           "title": "Limelight Integration",
@@ -95,7 +90,6 @@
     },
     "java": {
       "name": "Java Programming",
-      "icon": "</>",
       "items": [
         {
           "title": "Comments",

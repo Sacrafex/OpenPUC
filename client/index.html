@@ -769,7 +769,7 @@
             const teamNumber = getTeamNumber();
             if (teamNumber) {
                 const robotStatus = document.getElementById('robot-status');
-                robotStatus.innerHTML = '<span class="loading-spinner"></span>Robot Status: Checking multiple addresses...';
+                robotStatus.innerHTML = '</span>Robot Status: Checking multiple addresses...';
                 robotStatus.style.color = '#ff9800'; // Orange
                 robotStatus.classList.add('pulse');
                 ipcRenderer.send('ping-roborio', teamNumber);
@@ -928,11 +928,11 @@
             robotStatus.classList.remove('pulse');
             
             if (status.connected) {
-                robotStatus.innerHTML = `🟢 Robot Status: Connected to ${status.address}`;
+                robotStatus.innerHTML = `Robot Status: Connected to ${status.address}`;
                 robotStatus.style.color = '#4CAF50'; // Green
                 robotStatus.classList.add('fade-in');
             } else {
-                robotStatus.innerHTML = `🔴 Robot Status: Disconnected (${status.error || 'Unable to reach roboRIO'})`;
+                robotStatus.innerHTML = `Robot Status: Disconnected`;
                 robotStatus.style.color = '#f44336'; // Red
                 robotStatus.classList.add('fade-in');
             }

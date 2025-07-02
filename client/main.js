@@ -271,15 +271,12 @@ function getDirectoryContents(dirPath) {
 }
 
 function shouldUpdateFile(filename) {
-  // Define which files should be updated
   const excludedFiles = [
-    'settings.json',
     'backup',
     '.git',
     '.gitignore',
     'node_modules',
-    '.DS_Store',
-    'Thumbs.db'
+    '.DS_Store'
   ];
   
   return !excludedFiles.some(excluded => filename.includes(excluded));
@@ -380,8 +377,8 @@ function restoreBackup(backupDir, clientDir, parentDir) {
 
 app.on('ready', () => {
   mainWindow = new BrowserWindow({
-    width: 800,
-    height: 600,
+    width: 1000,
+    height: 800,
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: false
