@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "main": "main.js",
   "scripts": {
-    "start": "electron ."
+    "start": "electron .",
+    "build": "electron-builder --win --linux"
   },
   "dependencies": {
     "ws": "^8.0.0"
@@ -13,6 +14,7 @@
     "vscode": "^1.80.0"
   },
   "devDependencies": {
-    "electron": "^36.5.0"
+    "electron": "^36.5.0",
+    "electron-builder": "^26.0.12"
   }
 }
