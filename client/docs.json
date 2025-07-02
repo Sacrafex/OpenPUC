@@ -1,0 +1,124 @@
+{
+  "categories": {
+    "motor_control": {
+      "name": "Motor Control",
+      "icon": "⚙️",
+      "items": [
+        {
+          "title": "Basic Motor Setup",
+          "description": "Initialize and control a simple motor",
+          "code": "// Create a motor controller\nCANSparkMax motor = new CANSparkMax(1, MotorType.kBrushless);\n\n// Set motor speed (range: -1.0 to 1.0)\nmotor.set(0.5);\n\n// Stop the motor\nmotor.set(0);",
+          "language": "java",
+          "tags": ["motor", "cansparkmax", "basic"]
+        },
+        {
+          "title": "Motor with PID Control",
+          "description": "Setup PID control for precise motor positioning",
+          "code": "// Get the PID controller\nSparkMaxPIDController pidController = motor.getPIDController();\n\n// Set PID coefficients\npidController.setP(0.1);\npidController.setI(1e-4);\npidController.setD(1);\npidController.setIZone(0);\npidController.setFF(0);\npidController.setOutputRange(-1, 1);\n\n// Set target position (in rotations)\npidController.setReference(10, CANSparkMax.ControlType.kPosition);",
+          "language": "java",
+          "tags": ["motor", "pid", "position", "control"]
+        }
+      ]
+    },
+    "sensors": {
+      "name": "Sensors",
+      "icon": "🌡",
+      "items": [
+        {
+          "title": "Encoder Reading",
+          "description": "Read encoder values for position and velocity",
+          "code": "// Get the encoder from the motor\nRelativeEncoder encoder = motor.getEncoder();\n\n// Read position (in rotations)\ndouble position = encoder.getPosition();\n\n// Read velocity (in RPM)\ndouble velocity = encoder.getVelocity();\n\n// Reset encoder position\nencoder.setPosition(0);",
+          "language": "java",
+          "tags": ["encoder", "sensor", "position", "velocity"]
+        },
+        {
+          "title": "Gyroscope Setup",
+          "description": "Initialize and use a gyroscope for robot orientation",
+          "code": "// Create gyroscope (ADXRS450 or NavX)\nADXRS450_Gyro gyro = new ADXRS450_Gyro();\n\n// Get current angle\ndouble angle = gyro.getAngle();\n\n// Get rate of rotation\ndouble rate = gyro.getRate();\n\n// Reset gyroscope\ngyro.reset();",
+          "language": "java",
+          "tags": ["gyro", "sensor", "angle", "rotation"]
+        }
+      ]
+    },
+    "drivetrain": {
+      "name": "Drivetrain",
+      "icon": "🛞",
+      "items": [
+        {
+          "title": "Tank Drive",
+          "description": "Basic tank drive setup with two motor groups",
+          "code": "// Create motor controllers\nCANSparkMax leftMotor1 = new CANSparkMax(1, MotorType.kBrushless);\nCANSparkMax leftMotor2 = new CANSparkMax(2, MotorType.kBrushless);\nCANSparkMax rightMotor1 = new CANSparkMax(3, MotorType.kBrushless);\nCANSparkMax rightMotor2 = new CANSparkMax(4, MotorType.kBrushless);\n\n// Group motors\nMotorControllerGroup leftMotors = new MotorControllerGroup(leftMotor1, leftMotor2);\nMotorControllerGroup rightMotors = new MotorControllerGroup(rightMotor1, rightMotor2);\n\n// Create differential drive\nDifferentialDrive drive = new DifferentialDrive(leftMotors, rightMotors);\n\n// Drive with joystick inputs\ndrive.tankDrive(leftJoystick.getY(), rightJoystick.getY());",
+          "language": "java",
+          "tags": ["drivetrain", "tank", "differential", "joystick"]
+        },
+        {
+          "title": "Arcade Drive",
+          "description": "Arcade drive with single joystick control",
+          "code": "// Create differential drive (motors setup same as tank drive)\nDifferentialDrive drive = new DifferentialDrive(leftMotors, rightMotors);\n\n// Arcade drive with joystick\n// Forward/backward with left stick Y, turning with right stick X\ndrive.arcadeDrive(joystick.getY(), joystick.getX());\n\n// Or with separate speed and rotation values\ndouble speed = -joystick.getY(); // Negative for forward\ndouble rotation = joystick.getX();\ndrive.arcadeDrive(speed, rotation);",
+          "language": "java",
+          "tags": ["drivetrain", "arcade", "joystick", "control"]
+        }
+      ]
+    },
+    "autonomous": {
+      "name": "Autonomous",
+      "icon": "🤖",
+      "items": [
+        {
+          "title": "Simple Timed Auto",
+          "description": "Basic autonomous routine using timer",
+          "code": "private Timer autoTimer = new Timer();\n\npublic void autonomousInit() {\n    autoTimer.reset();\n    autoTimer.start();\n}\n\npublic void autonomousPeriodic() {\n    if (autoTimer.get() < 2.0) {\n        // Drive forward for 2 seconds\n        drive.arcadeDrive(0.5, 0);\n    } else {\n        // Stop driving\n        drive.arcadeDrive(0, 0);\n    }\n}",
+          "language": "java",
+          "tags": ["autonomous", "timer", "basic"]
+        },
+        {
+          "title": "Command-Based Auto",
+          "description": "Using command groups for complex autonomous",
+          "code": "// In RobotContainer.java\npublic Command getAutonomousCommand() {\n    return new SequentialCommandGroup(\n        new DriveDistance(drivetrain, 2.0), // Drive 2 meters\n        new TurnAngle(drivetrain, 90),      // Turn 90 degrees\n        new DriveDistance(drivetrain, 1.0)  // Drive 1 meter\n    );\n}\n\n// Example DriveDistance command\npublic class DriveDistance extends CommandBase {\n    private final Drivetrain drivetrain;\n    private final double distance;\n    \n    public DriveDistance(Drivetrain drivetrain, double distance) {\n        this.drivetrain = drivetrain;\n        this.distance = distance;\n        addRequirements(drivetrain);\n    }\n}",
+          "language": "java",
+          "tags": ["autonomous", "command", "sequential", "complex"]
+        }
+      ]
+    },
+    "vision": {
+      "name": "Vision Processing",
+      "icon": "👁️",
+      "items": [
+        {
+          "title": "Limelight Integration",
+          "description": "Basic Limelight camera setup and targeting",
+          "code": "// Get values from Limelight\nNetworkTable table = NetworkTableInstance.getDefault().getTable(\"limelight\");\nNetworkTableEntry tv = table.getEntry(\"tv\"); // Valid target\nNetworkTableEntry tx = table.getEntry(\"tx\"); // Horizontal offset\nNetworkTableEntry ty = table.getEntry(\"ty\"); // Vertical offset\nNetworkTableEntry ta = table.getEntry(\"ta\"); // Target area\n\n// Check if target is detected\nif (tv.getDouble(0) == 1) {\n    double horizontalOffset = tx.getDouble(0);\n    double verticalOffset = ty.getDouble(0);\n    double targetArea = ta.getDouble(0);\n    \n    // Use values for targeting\n    double steeringAdjust = horizontalOffset * 0.1;\n    drive.arcadeDrive(0.5, steeringAdjust);\n}",
+          "language": "java",
+          "tags": ["vision", "limelight", "targeting", "networktables"]
+        }
+      ]
+    },
+    "java": {
+      "name": "Java Programming",
+      "icon": "</>",
+      "items": [
+        {
+          "title": "Comments",
+          "description": "Basic commenting practices in Java",
+          "code": "// This is a single-line comment\n\n/* This is a multi-line comment\n   spanning multiple lines */\n\n/**\n * This is a Javadoc comment\n * Used for generating documentation\n * @param parameter description\n * @return return value description\n */",
+          "language": "java",
+          "tags": ["java", "comments", "documentation", "javadoc"]
+        },
+        {
+          "title": "Variables and Data Types",
+          "description": "Common variable declarations in FRC programming",
+          "code": "// Integer variables\nint motorID = 1;\nint teamNumber = 2839;\n\n// Double variables for measurements\ndouble speed = 0.5;\ndouble distance = 2.0;\ndouble angle = 90.0;\n\n// Boolean variables\nboolean isConnected = true;\nboolean targetFound = false;\n\n// String variables\nString robotName = \"OpenPUC Bot\";\nString limelightTable = \"limelight\";",
+          "language": "java",
+          "tags": ["java", "variables", "types", "int", "double", "boolean", "string"]
+        },
+        {
+          "title": "Control Structures",
+          "description": "If statements, loops, and switch cases in Java",
+          "code": "// If-else statements\nif (targetFound) {\n    drive.arcadeDrive(0.5, steeringAdjust);\n} else {\n    drive.arcadeDrive(0, 0);\n}\n\n// For loop\nfor (int i = 0; i < 10; i++) {\n    System.out.println(\"Count: \" + i);\n}\n\n// While loop\nwhile (encoder.getPosition() < 100) {\n    motor.set(0.3);\n}\n\n// Switch statement\nswitch (gameState) {\n    case AUTONOMOUS:\n        runAutonomous();\n        break;\n    case TELEOP:\n        runTeleop();\n        break;\n    default:\n        stopAll();\n}",
+          "language": "java",
+          "tags": ["java", "control", "if", "loop", "switch", "while", "for"]
+        }
+      ]
+    }
+  }
+}

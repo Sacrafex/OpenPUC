@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>OpenPUC - Client System</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            background-color: #121212;
+            color: white;
+        }
+        #header {
+            background-color: #1e1e1e;
+            color: #bb86fc;
+            padding: 10px;
+            text-align: center;
+        }
+        #main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+        }
+        #project-selection {
+            margin-bottom: 20px;
+        }
+        #settings {
+            margin-bottom: 20px;
+            padding: 15px;
+            border: 1px solid #333;
+            border-radius: 5px;
+        }
+        .connection-info {
+            font-size: 12px;
+            color: #888;
+            margin-top: 10px;
+            line-height: 1.4;
+        }
+        #update-section {
+            margin-bottom: 20px;
+            padding: 15px;
+            border: 1px solid #333;
+            border-radius: 5px;
+            display: none;
+        }
+        .update-available {
+            border-color: #ff9800 !important;
+            background-color: rgba(255, 152, 0, 0.1);
+        }
+        .update-info {
+            font-size: 14px;
+            margin: 10px 0;
+        }
+        .version-info {
+            font-size: 12px;
+            color: #888;
+        }
+        #projects {
+            margin-top: 20px;
+        }
+        input {
+            background-color: #333;
+            color: white;
+            border: 1px solid #555;
+            padding: 8px;
+            margin: 5px;
+            border-radius: 3px;
+        }
+        input:focus {
+            outline: none;
+            border-color: #bb86fc;
+        }
+        button {
+            background-color: #333;
+            color: #bb86fc;
+            border: none;
+            padding: 10px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #444;
+        }
+        .project-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div id="header">
+        <h1>OpenPUC</h1>
+        <p id="robot-status">Robot Status: Checking...</p>
+    </div>
+    <div id="main">
+        <div id="update-section">
+            <h2>🚀 Update Available</h2>
+            <div id="update-info" class="update-info"></div>
+            <button id="install-update-btn" onclick="installUpdate()">Install Update</button>
+            <button onclick="dismissUpdate()">Later</button>
+            <div id="update-status" class="version-info"></div>
+        </div>
+        <div id="settings">
+            <h2>Settings</h2>
+            <label for="team-number">Team Number:</label>
+            <input type="number" id="team-number" placeholder="Enter your FRC team number" />
+            <button onclick="saveTeamNumber()">Save</button>
+            <button onclick="checkRobotConnection()">Check Robot Connection</button>
+            <button onclick="checkForUpdates()">Check for Updates</button>
+            <div class="connection-info">
+                <strong>Connection attempts:</strong><br>
+                • mDNS: roboRIO-####-FRC.local<br>
+                • Static IP: 10.TE.AM.2<br>
+                • USB: 172.22.11.2<br>
+                • Alt mDNS: roborio-####-frc.local
+            </div>
+        </div>
+        <div id="project-selection">
+            <h2>Add a Project</h2>
+            <button onclick="selectFolder()">Select Folder</button>
+        </div>
+        <div id="projects">
+            <h2>Projects</h2>
+            <ul id="project-list"></ul>
+        </div>
+    </div>
+    <script>
+        const { ipcRenderer } = require('electron');
+
+        function selectFolder() {
+            ipcRenderer.send('select-folder');
+        }
+
+        function saveTeamNumber() {
+            const teamNumber = document.getElementById('team-number').value;
+            if (teamNumber) {
+                ipcRenderer.send('save-team-number', teamNumber);
+            } else {
+                alert('Please enter a valid team number');
+            }
+        }
+
+        function loadTeamNumber() {
+            ipcRenderer.send('get-setting', 'teamNumber');
+        }
+
+        function saveProjects() {
+            const projectList = document.getElementById('project-list');
+            const projects = [];
+            projectList.querySelectorAll('.project-item span').forEach(item => {
+                projects.push(item.textContent);
+            });
+            ipcRenderer.send('save-setting', { key: 'projects', value: projects });
+        }
+
+        function loadProjects() {
+            ipcRenderer.send('get-setting', 'projects');
+        }
+
+        function checkRobotConnection() {
+            const teamNumber = getTeamNumber();
+            if (teamNumber) {
+                document.getElementById('robot-status').textContent = 'Robot Status: Checking multiple addresses...';
+                document.getElementById('robot-status').style.color = '#ff9800'; // Orange
+                ipcRenderer.send('ping-roborio', teamNumber);
+            } else {
+                document.getElementById('robot-status').textContent = 'Robot Status: No team number set';
+                document.getElementById('robot-status').style.color = '#757575'; // Gray
+            }
+        }
+
+        function getTeamNumber() {
+            return document.getElementById('team-number').value;
+        }
+
+        // Updater functions
+        function checkForUpdates() {
+            ipcRenderer.send('check-for-updates');
+        }
+
+        function installUpdate() {
+            document.getElementById('install-update-btn').disabled = true;
+            document.getElementById('update-status').textContent = 'Installing update...';
+            ipcRenderer.send('install-update');
+        }
+
+        function dismissUpdate() {
+            document.getElementById('update-section').style.display = 'none';
+        }
+
+        function showUpdateAvailable(updateInfo) {
+            const updateSection = document.getElementById('update-section');
+            const updateInfoDiv = document.getElementById('update-info');
+            
+            updateSection.style.display = 'block';
+            updateSection.classList.add('update-available');
+            
+            updateInfoDiv.innerHTML = `
+                <strong>New version available: ${updateInfo.latestVersion}</strong><br>
+                Current version: ${updateInfo.currentVersion}<br>
+                <small>Released: ${new Date(updateInfo.releaseInfo.publishedAt).toLocaleDateString()}</small>
+            `;
+        }
+
+        // IPC event handlers
+        ipcRenderer.on('setting-value', (event, { key, value }) => {
+            if (key === 'teamNumber' && value) {
+                document.getElementById('team-number').value = value;
+                setTimeout(checkRobotConnection, 1000);
+            } else if (key === 'projects' && value) {
+                value.forEach(addProject);
+            }
+        });
+
+        ipcRenderer.on('setting-saved', (event, { key, success, error }) => {
+            if (key === 'teamNumber') {
+                if (success) {
+                    console.log('Team number saved successfully');
+                    checkRobotConnection();
+                } else {
+                    alert(`Failed to save team number: ${error || 'Unknown error'}`);
+                }
+            }
+        });
+
+        ipcRenderer.on('check-updates-on-startup', () => {
+            checkForUpdates();
+        });
+
+        ipcRenderer.on('update-available', (event, updateInfo) => {
+            showUpdateAvailable(updateInfo);
+        });
+
+        ipcRenderer.on('no-updates-available', (event, info) => {
+            console.log(`App is up to date (version ${info.currentVersion})`);
+        });
+
+        ipcRenderer.on('update-check-error', (event, error) => {
+            console.error('Failed to check for updates:', error.error);
+        });
+
+        ipcRenderer.on('update-status', (event, status) => {
+            const statusDiv = document.getElementById('update-status');
+            const installBtn = document.getElementById('install-update-btn');
+            
+            statusDiv.textContent = status.message;
+            
+            if (status.status === 'complete') {
+                statusDiv.style.color = '#4CAF50';
+                installBtn.textContent = 'Restart Required';
+                installBtn.onclick = () => {
+                    if (confirm('Restart the application to complete the update?')) {
+                        ipcRenderer.send('restart-app');
+                    }
+                };
+            } else if (status.status === 'error') {
+                statusDiv.style.color = '#f44336';
+                installBtn.disabled = false;
+                installBtn.textContent = 'Retry Update';
+            }
+        });
+
+        ipcRenderer.on('folder-selected', (event, folderPath) => {
+            addProject(folderPath);
+            saveProjects();
+        });
+
+        ipcRenderer.on('roborio-status', (event, status) => {
+            const robotStatus = document.getElementById('robot-status');
+            if (status.connected) {
+                robotStatus.textContent = `Robot Status: Connected to ${status.address}`;
+                robotStatus.style.color = '#4CAF50'; // Green
+            } else {
+                robotStatus.textContent = `Robot Status: Disconnected (${status.error || 'Unable to reach roboRIO'})`;
+                robotStatus.style.color = '#f44336'; // Red
+            }
+        });
+
+        function addProject(folderPath) {
+            const projectList = document.getElementById('project-list');
+            const listItem = document.createElement('li');
+            listItem.className = 'project-item';
+            const projectText = document.createElement('span');
+            projectText.textContent = folderPath;
+            const closeButton = document.createElement('button');
+            closeButton.textContent = 'Close';
+            closeButton.onclick = () => {
+                projectList.removeChild(listItem);
+                saveProjects();
+            };
+            listItem.appendChild(projectText);
+            listItem.appendChild(closeButton);
+            projectList.appendChild(listItem);
+        }
+
+        setInterval(() => {
+            if (getTeamNumber()) {
+                checkRobotConnection();
+            }
+        }, 30000);
+
+        loadTeamNumber();
+        loadProjects();
+    </script>
+</body>
+</html>

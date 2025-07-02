@@ -10,14 +10,68 @@
             display: flex;
             flex-direction: column;
             height: 100vh;
-            background-color: #121212;
+            background: linear-gradient(135deg, #121212 0%, #1a1a1a 100%);
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
             color: white;
+        }
+        
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        /* Hide scrollbars globally while keeping functionality */
+        * {
+            scrollbar-width: none; /* Firefox */
+            -ms-overflow-style: none; /* Internet Explorer 10+ */
+        }
+        *::-webkit-scrollbar {
+            width: 0;
+            height: 0;
+            background: transparent; /* Chrome/Safari/Webkit */
         }
         #header {
             background-color: #1e1e1e;
             color: #bb86fc;
             padding: 10px;
             text-align: center;
+            position: relative;
+        }
+        
+        #header h1 {
+            position: relative;
+            z-index: 1;
+            margin: 0;
+        }
+        
+        #header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(187, 134, 252, 0.1), transparent);
+            animation: shimmer 3s infinite;
+            z-index: 0;
+        }
+        
+        @keyframes shimmer {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+        
+        #robot-status {
+            margin-top: 5px;
+            font-size: 14px;
+            font-weight: bold;
+            position: relative;
+            z-index: 10;
+            padding: 8px;
+            border-radius: 4px;
+            display: inline-block;
         }
         #main {
             flex: 1;
@@ -28,8 +82,291 @@
         #project-selection {
             margin-bottom: 20px;
         }
+        #settings {
+            margin-bottom: 20px;
+            padding: 15px;
+            border: 1px solid #333;
+            border-radius: 5px;
+        }
+        .connection-info {
+            font-size: 12px;
+            color: #888;
+            margin-top: 10px;
+            line-height: 1.4;
+        }
+        #update-section {
+            margin-bottom: 20px;
+            padding: 15px;
+            border: 1px solid #333;
+            border-radius: 5px;
+            display: none;
+        }
+        .update-available {
+            border-color: #ff9800 !important;
+            background-color: rgba(255, 152, 0, 0.1);
+        }
+        .update-info {
+            font-size: 14px;
+            margin: 10px 0;
+        }
+        .version-info {
+            font-size: 12px;
+            color: #888;
+        }
+        #documentation-section {
+            margin-bottom: 20px;
+            padding: 15px;
+            border: 1px solid #333;
+            border-radius: 5px;
+        }
+        #search-input {
+            width: calc(100% - 120px);
+            margin-right: 10px;
+        }
+        .doc-results {
+            margin-top: 15px;
+        }
+        .doc-item {
+            background-color: #1e1e1e;
+            border: 1px solid #333;
+            border-radius: 5px;
+            padding: 12px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .doc-item:hover {
+            background-color: #2a2a2a;
+            border-color: #bb86fc;
+        }
+        .doc-item h4 {
+            margin: 0 0 5px 0;
+            color: #bb86fc;
+        }
+        .doc-item p {
+            margin: 0;
+            font-size: 12px;
+            color: #ccc;
+        }
+        .no-results {
+            text-align: center;
+            color: #888;
+            font-style: italic;
+            padding: 20px;
+        }
+        .doc-tabs {
+            display: flex;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #333;
+        }
+        .tab-button {
+            padding: 10px 20px;
+            background: none;
+            border: none;
+            color: #888;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            margin: 0;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        .tab-button:hover {
+            color: #bb86fc;
+            transform: translateY(-1px);
+        }
+        .tab-button.active {
+            color: #bb86fc;
+            border-bottom-color: #bb86fc;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .built-in-docs {
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            gap: 20px;
+            height: 400px;
+        }
+        .doc-categories {
+            border-right: 1px solid #333;
+            padding-right: 15px;
+            overflow-y: auto;
+        }
+        .doc-categories::-webkit-scrollbar,
+        .doc-content::-webkit-scrollbar {
+            width: 0px;
+            background: transparent;
+        }
+        .built-in-search {
+            margin-bottom: 15px;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        #built-in-search-input {
+            flex: 1;
+            min-width: 200px;
+        }
+        .search-results-info {
+            font-size: 12px;
+            color: #888;
+            margin-left: 10px;
+        }
+        /* Loading animations */
+        .loading-spinner {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid #333;
+            border-radius: 50%;
+            border-top-color: #bb86fc;
+            animation: spin 1s ease-in-out infinite;
+            margin-right: 8px;
+        }
+        .loading-dots::after {
+            content: '';
+            animation: dots 1.5s steps(4, end) infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        @keyframes dots {
+            0%, 20% { content: ''; }
+            40% { content: '.'; }
+            60% { content: '..'; }
+            80%, 100% { content: '...'; }
+        }
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .slide-in {
+            animation: slideIn 0.3s ease-out;
+        }
+        @keyframes slideIn {
+            from { transform: translateX(-100%); }
+            to { transform: translateX(0); }
+        }
+        .category-item {
+            padding: 10px;
+            cursor: pointer;
+            border-radius: 5px;
+            margin-bottom: 5px;
+            transition: background-color 0.2s;
+        }
+        .category-item:hover {
+            background-color: #2a2a2a;
+        }
+        .category-item.active {
+            background-color: #bb86fc;
+            color: #121212;
+        }
+        .doc-content {
+            overflow-y: auto;
+            padding-left: 15px;
+        }
+        .doc-content::-webkit-scrollbar {
+            width: 0px;
+            background: transparent;
+        }
+        .code-example {
+            background-color: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+        .code-header {
+            background-color: #2a2a2a;
+            padding: 10px 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #333;
+        }
+        .code-title {
+            font-weight: bold;
+            color: #bb86fc;
+        }
+        .copy-button {
+            background-color: #333;
+            border: none;
+            color: #bb86fc;
+            padding: 5px 10px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.2s ease;
+        }
+        .copy-button:hover {
+            background-color: #444;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(187, 134, 252, 0.3);
+        }
+        .copy-button.copied {
+            background-color: #4CAF50;
+            color: white;
+            transform: scale(1.1);
+        }
+        .code-description {
+            padding: 10px 15px;
+            color: #ccc;
+            font-size: 14px;
+            border-bottom: 1px solid #333;
+        }
+        .code-block {
+            padding: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            line-height: 1.5;
+            color: #f8f8f2;
+            overflow-x: auto;
+        }
+        .code-tags {
+            padding: 10px 15px;
+            border-top: 1px solid #333;
+        }
+        .tag {
+            display: inline-block;
+            background-color: #333;
+            color: #bb86fc;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            margin-right: 5px;
+            margin-bottom: 5px;
+        }
         #projects {
             margin-top: 20px;
+        }
+        input {
+            background-color: #333;
+            color: white;
+            border: 1px solid #555;
+            padding: 8px;
+            margin: 5px;
+            border-radius: 3px;
+            transition: all 0.2s ease;
+        }
+        input:focus {
+            outline: none;
+            border-color: #bb86fc;
+            box-shadow: 0 0 10px rgba(187, 134, 252, 0.3);
+            transform: scale(1.02);
         }
         button {
             background-color: #333;
@@ -37,9 +374,13 @@
             border: none;
             padding: 10px;
             cursor: pointer;
+            border-radius: 3px;
+            transition: all 0.2s ease;
         }
         button:hover {
             background-color: #444;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(187, 134, 252, 0.2);
         }
         .project-item {
             display: flex;
@@ -52,86 +393,555 @@
 <body>
     <div id="header">
         <h1>OpenPUC</h1>
-        <p id="private-ip">Fetching...</p>
-        <p id="host-status">Host Status: Not Connected</p>
+        <p id="robot-status">Robot Status: Checking...</p>
     </div>
     <div id="main">
-        <div id="project-selection">
-            <h2>Add a Project</h2>
-            <button onclick="selectFolder()">Select Folder</button>
+        <div id="update-section">
+            <h2>Update Available</h2>
+            <div id="update-info" class="update-info"></div>
+            <button id="install-update-btn" onclick="installUpdate()">Install Update</button>
+            <button onclick="dismissUpdate()">Later</button>
+            <div id="update-status" class="version-info" style="margin-top: 10px;"></div>
         </div>
-        <div id="projects">
-            <h2>Projects</h2>
-            <ul id="project-list"></ul>
+        <div id="documentation-section">
+            <h2>Documentation</h2>
+            <div class="doc-tabs">
+                <button class="tab-button active" onclick="switchTab('built-in')">Built-in Docs</button>
+                <button class="tab-button" onclick="switchTab('external')">External Search</button>
+            </div>
+            
+            <div id="built-in-tab" class="tab-content active">
+                <div class="built-in-search">
+                    <input type="text" id="built-in-search-input" placeholder="Search documentation (e.g., 'motor', 'pid', 'encoder')" />
+                    <button onclick="searchBuiltInDocs()">Search</button>
+                    <button onclick="clearBuiltInSearch()">Clear</button>
+                    <span class="search-results-info" id="search-info"></span>
+                </div>
+                <div class="built-in-docs">
+                    <div class="doc-categories" id="doc-categories">
+                        <div class="no-results loading-dots">Loading documentation</div>
+                    </div>
+                    <div class="doc-content" id="doc-content">
+                        <div class="no-results">Select a category to view documentation</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="external-tab" class="tab-content">
+                <div style="display: flex; align-items: center; margin-bottom: 15px;">
+                    <input type="text" id="search-input" placeholder="Search FRC documentation (e.g., 'motor control', 'vision processing')" />
+                    <button onclick="searchDocumentation()">Search</button>
+                </div>
+                <div id="search-results" class="doc-results"></div>
+            </div>
+        </div>
+        <div id="settings">
+            <h2>Settings</h2>
+            <label for="team-number">Team Number:</label>
+            <input type="number" id="team-number" placeholder="Enter your FRC team number" />
+            <button onclick="saveTeamNumber()">Save</button>
+            <button onclick="checkRobotConnection()">Check Robot Connection</button>
+            <button onclick="checkForUpdates()">Check for Updates</button>
+            <div class="connection-info">
+                <strong>Connection attempts:</strong><br>
+                • mDNS: roboRIO-####-FRC.local<br>
+                • Static IP: 10.TE.AM.2<br>
+                • USB: 172.22.11.2<br>
+                • Alt mDNS: roborio-####-frc.local
+            </div>
         </div>
     </div>
     <script>
         const { ipcRenderer } = require('electron');
-        const os = require('os');
 
-        function selectFolder() {
-            ipcRenderer.send('select-folder');
+        function searchDocumentation() {
+            const query = document.getElementById('search-input').value.trim();
+            if (query.length < 2) {
+                alert('Please enter at least 2 characters to search');
+                return;
+            }
+            
+            const searchResults = document.getElementById('search-results');
+            searchResults.innerHTML = '<div class="no-results"><span class="loading-spinner"></span>Searching external documentation...</div>';
+            searchResults.classList.add('pulse');
+            
+            ipcRenderer.send('search-documentation', query);
         }
 
-        ipcRenderer.on('folder-selected', (event, folderPath) => {
-            addProject(folderPath);
-            saveProjects();
-        });
-
-        ipcRenderer.on('port-info', (event, port) => {
-            const privateIP = getPrivateIP();
-            document.getElementById('private-ip').textContent = `Connection: ${privateIP}:${port}`;
-        });
-
-        function addProject(folderPath) {
-            const projectList = document.getElementById('project-list');
-            const listItem = document.createElement('li');
-            listItem.className = 'project-item';
-            const projectText = document.createElement('span');
-            projectText.textContent = folderPath;
-            const closeButton = document.createElement('button');
-            closeButton.textContent = 'Close';
-            closeButton.onclick = () => {
-                projectList.removeChild(listItem);
-                saveProjects();
-            };
-            listItem.appendChild(projectText);
-            listItem.appendChild(closeButton);
-            projectList.appendChild(listItem);
+        function openDocumentation(url) {
+            ipcRenderer.send('open-url', url);
         }
 
-        function saveProjects() {
-            const projectList = document.getElementById('project-list');
-            const projects = [];
-            projectList.querySelectorAll('.project-item span').forEach(item => {
-                projects.push(item.textContent);
+        function displaySearchResults(results, query) {
+            const resultsDiv = document.getElementById('search-results');
+            
+            if (!results || results.length === 0) {
+                resultsDiv.innerHTML = '<div class="no-results fade-in">No results found</div>';
+                return;
+            }
+
+            let html = `<h3 class="slide-in">Search results for "${query}":</h3>`;
+            results.forEach((result, index) => {
+                html += `
+                    <div class="doc-item fade-in" onclick="openDocumentation('${result.url}')" style="animation-delay: ${index * 0.1}s;">
+                        <h4>${result.name}</h4>
+                        <p>${result.description}</p>
+                    </div>
+                `;
             });
-            localStorage.setItem('projects', JSON.stringify(projects));
+            
+            resultsDiv.innerHTML = html;
         }
 
-        function loadProjects() {
-            const projects = JSON.parse(localStorage.getItem('projects') || '[]');
-            projects.forEach(addProject);
-        }
-
-        function getPrivateIP() {
-            const interfaces = os.networkInterfaces();
-            for (const name of Object.keys(interfaces)) {
-                for (const iface of interfaces[name]) {
-                    if (iface.family === 'IPv4' && !iface.internal) {
-                        return iface.address;
+        // Allow Enter key to search
+        document.addEventListener('DOMContentLoaded', () => {
+            const searchInput = document.getElementById('search-input');
+            if (searchInput) {
+                searchInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        searchDocumentation();
                     }
+                });
+            }
+            
+            const builtInSearchInput = document.getElementById('built-in-search-input');
+            if (builtInSearchInput) {
+                builtInSearchInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        searchBuiltInDocs();
+                    }
+                });
+            }
+            
+            // Load built-in documentation
+            ipcRenderer.send('get-built-in-docs');
+        });
+
+        let builtInDocs = null;
+        let currentSearchResults = null;
+
+        function searchBuiltInDocs() {
+            const query = document.getElementById('built-in-search-input').value.trim().toLowerCase();
+            const searchInfo = document.getElementById('search-info');
+            
+            if (!query) {
+                searchInfo.innerHTML = '<span class="pulse" style="color: #ff9800;">Enter a search term</span>';
+                return;
+            }
+            
+            if (!builtInDocs) {
+                searchInfo.innerHTML = '<span class="pulse" style="color: #f44336;">Documentation not loaded</span>';
+                return;
+            }
+            
+            // Show searching animation
+            searchInfo.innerHTML = '<span class="loading-spinner"></span>Searching...';
+            
+            // Simulate search delay for animation
+            setTimeout(() => {
+                performBuiltInSearch(query);
+            }, 300);
+        }
+
+        function performBuiltInSearch(query) {
+            const searchInfo = document.getElementById('search-info');
+            
+            // Search through all documentation items
+            const results = [];
+            Object.keys(builtInDocs.categories).forEach(categoryKey => {
+                const category = builtInDocs.categories[categoryKey];
+                category.items.forEach(item => {
+                    // Search in title, description, code, and tags
+                    const searchText = `${item.title} ${item.description} ${item.code} ${item.tags.join(' ')}`.toLowerCase();
+                    if (searchText.includes(query)) {
+                        results.push({
+                            ...item,
+                            categoryKey,
+                            categoryName: category.name,
+                            categoryIcon: category.icon
+                        });
+                    }
+                });
+            });
+            
+            currentSearchResults = results;
+            displayBuiltInSearchResults(results, query);
+        }
+
+        function displayBuiltInSearchResults(results, query) {
+            const categoriesDiv = document.getElementById('doc-categories');
+            const contentDiv = document.getElementById('doc-content');
+            const searchInfo = document.getElementById('search-info');
+            
+            if (results.length === 0) {
+                searchInfo.innerHTML = `<span style="color: #f44336;">No results found for "${query}"</span>`;
+                contentDiv.innerHTML = '<div class="no-results fade-in">No results found. Try different keywords.</div>';
+                return;
+            }
+            
+            searchInfo.innerHTML = `<span style="color: #4CAF50;">Found ${results.length} result${results.length !== 1 ? 's' : ''} for "${query}"</span>`;
+            
+            // Group results by category for sidebar
+            const categoryGroups = {};
+            results.forEach(result => {
+                if (!categoryGroups[result.categoryKey]) {
+                    categoryGroups[result.categoryKey] = {
+                        name: result.categoryName,
+                        icon: result.categoryIcon,
+                        count: 0
+                    };
+                }
+                categoryGroups[result.categoryKey].count++;
+            });
+            
+            // Update categories sidebar with animation
+            let categoriesHtml = '<div style="font-weight: bold; margin-bottom: 10px; color: #bb86fc;" class="slide-in">Search Results</div>';
+            Object.keys(categoryGroups).forEach(categoryKey => {
+                const group = categoryGroups[categoryKey];
+                categoriesHtml += `
+                    <div class="category-item fade-in" onclick="showCategoryResults('${categoryKey}')" style="animation-delay: 0.1s;">
+                        ${group.name} (${group.count})
+                    </div>
+                `;
+            });
+            categoriesDiv.innerHTML = categoriesHtml;
+            
+            // Display all results in content area with animation
+            let contentHtml = `<h3 class="slide-in">Search Results for "${query}"</h3>`;
+            results.forEach((item, index) => {
+                contentHtml += `
+                    <div class="code-example fade-in" style="animation-delay: ${index * 0.1}s;">
+                        <div class="code-header">
+                            <span class="code-title">${item.title}</span>
+                            <button class="copy-button" onclick="copyCode('${item.title.replace(/'/g, "\\'")}')">Copy</button>
+                        </div>
+                        <div class="code-description">${item.description}</div>
+                        <pre class="code-block" id="code-${item.title.replace(/\s+/g, '-').toLowerCase()}">${item.code}</pre>
+                        <div class="code-tags">
+                            <span class="tag">${item.categoryName}</span>
+                            ${item.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
+                        </div>
+                    </div>
+                `;
+            });
+            contentDiv.innerHTML = contentHtml;
+        }
+
+        function showCategoryResults(categoryKey) {
+            if (!currentSearchResults) return;
+            
+            const categoryResults = currentSearchResults.filter(item => item.categoryKey === categoryKey);
+            const category = builtInDocs.categories[categoryKey];
+            
+            // Update active category in sidebar
+            document.querySelectorAll('.category-item').forEach(item => item.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            const contentDiv = document.getElementById('doc-content');
+            let html = `<h3 class="slide-in">${category.name} Results</h3>`;
+            categoryResults.forEach((item, index) => {
+                html += `
+                    <div class="code-example fade-in" style="animation-delay: ${index * 0.1}s;">
+                        <div class="code-header">
+                            <span class="code-title">${item.title}</span>
+                            <button class="copy-button" onclick="copyCode('${item.title.replace(/'/g, "\\'")}')">Copy</button>
+                        </div>
+                        <div class="code-description">${item.description}</div>
+                        <pre class="code-block" id="code-${item.title.replace(/\s+/g, '-').toLowerCase()}">${item.code}</pre>
+                        <div class="code-tags">
+                            ${item.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
+                        </div>
+                    </div>
+                `;
+            });
+            contentDiv.innerHTML = html;
+        }
+
+        function clearBuiltInSearch() {
+            document.getElementById('built-in-search-input').value = '';
+            document.getElementById('search-info').innerHTML = '';
+            currentSearchResults = null;
+            
+            if (builtInDocs) {
+                loadBuiltInDocs(builtInDocs);
+            }
+        }
+
+        function switchTab(tabName) {
+            // Remove active class from all tabs and content
+            document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            
+            // Add active class to selected tab and content
+            document.querySelector(`[onclick="switchTab('${tabName}')"]`).classList.add('active');
+            document.getElementById(`${tabName}-tab`).classList.add('active');
+        }
+
+        function loadBuiltInDocs(docs) {
+            builtInDocs = docs;
+            const categoriesDiv = document.getElementById('doc-categories');
+            
+            let html = '';
+            Object.keys(docs.categories).forEach((key, index) => {
+                const category = docs.categories[key];
+                html += `
+                    <div class="category-item ${index === 0 ? 'active' : ''}" onclick="selectCategory('${key}')">
+                        ${category.name}
+                    </div>
+                `;
+            });
+            
+            categoriesDiv.innerHTML = html;
+            
+            // Load first category by default
+            const firstKey = Object.keys(docs.categories)[0];
+            if (firstKey) {
+                selectCategory(firstKey);
+            }
+        }
+
+        function selectCategory(categoryKey) {
+            // Update active category
+            document.querySelectorAll('.category-item').forEach(item => item.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            const category = builtInDocs.categories[categoryKey];
+            const contentDiv = document.getElementById('doc-content');
+            
+            let html = '';
+            category.items.forEach(item => {
+                html += `
+                    <div class="code-example">
+                        <div class="code-header">
+                            <span class="code-title">${item.title}</span>
+                            <button class="copy-button" onclick="copyCode('${item.title.replace(/'/g, "\\'")}')">Copy</button>
+                        </div>
+                        <div class="code-description">${item.description}</div>
+                        <pre class="code-block" id="code-${item.title.replace(/\s+/g, '-').toLowerCase()}">${item.code}</pre>
+                        <div class="code-tags">
+                            ${item.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
+                        </div>
+                    </div>
+                `;
+            });
+            
+            contentDiv.innerHTML = html;
+        }
+
+        function copyCode(title) {
+            const codeId = `code-${title.replace(/\s+/g, '-').toLowerCase()}`;
+            const codeElement = document.getElementById(codeId);
+            const copyButton = event.target;
+            
+            if (codeElement) {
+                navigator.clipboard.writeText(codeElement.textContent).then(() => {
+                    copyButton.textContent = 'Copied!';
+                    copyButton.classList.add('copied');
+                    
+                    setTimeout(() => {
+                        copyButton.textContent = 'Copy';
+                        copyButton.classList.remove('copied');
+                    }, 2000);
+                }).catch(err => {
+                    console.error('Failed to copy code:', err);
+                    alert('Failed to copy code to clipboard');
+                });
+            }
+        }
+
+        function saveTeamNumber() {
+            const teamNumber = document.getElementById('team-number').value;
+            if (teamNumber) {
+                ipcRenderer.send('save-team-number', teamNumber);
+            } else {
+                alert('Please enter a valid team number');
+            }
+        }
+
+        function loadTeamNumber() {
+            ipcRenderer.send('get-setting', 'teamNumber');
+        }
+
+        function checkRobotConnection() {
+            const teamNumber = getTeamNumber();
+            if (teamNumber) {
+                const robotStatus = document.getElementById('robot-status');
+                robotStatus.innerHTML = '<span class="loading-spinner"></span>Robot Status: Checking multiple addresses...';
+                robotStatus.style.color = '#ff9800'; // Orange
+                robotStatus.classList.add('pulse');
+                ipcRenderer.send('ping-roborio', teamNumber);
+            } else {
+                const robotStatus = document.getElementById('robot-status');
+                robotStatus.textContent = 'Robot Status: No team number set';
+                robotStatus.style.color = '#757575'; // Gray
+                robotStatus.classList.remove('pulse');
+            }
+        }
+
+        function getTeamNumber() {
+            return document.getElementById('team-number').value;
+        }
+
+        // Updater functions
+        function checkForUpdates() {
+            const statusDiv = document.getElementById('update-status');
+            
+            // Show checking status immediately
+            statusDiv.innerHTML = '<span class="loading-spinner"></span>Checking for updates...';
+            statusDiv.style.color = '#bb86fc';
+            statusDiv.classList.add('pulse');
+            
+            ipcRenderer.send('check-for-updates');
+        }
+
+        function installUpdate() {
+            document.getElementById('install-update-btn').disabled = true;
+            document.getElementById('update-status').textContent = 'Installing update...';
+            ipcRenderer.send('install-update');
+        }
+
+        function dismissUpdate() {
+            document.getElementById('update-section').style.display = 'none';
+        }
+
+        function showUpdateAvailable(updateInfo) {
+            const updateSection = document.getElementById('update-section');
+            const updateInfoDiv = document.getElementById('update-info');
+            
+            updateSection.style.display = 'block';
+            updateSection.classList.add('update-available');
+            
+            updateInfoDiv.innerHTML = `
+                <strong>New version available: ${updateInfo.latestVersion}</strong><br>
+                Current version: ${updateInfo.currentVersion}<br>
+                <small>Released: ${new Date(updateInfo.releaseInfo.publishedAt).toLocaleDateString()}</small>
+            `;
+        }
+
+        // IPC event handlers
+        ipcRenderer.on('setting-value', (event, { key, value }) => {
+            if (key === 'teamNumber' && value) {
+                document.getElementById('team-number').value = value;
+                setTimeout(checkRobotConnection, 1000);
+            }
+        });
+
+        ipcRenderer.on('documentation-results', (event, data) => {
+            const searchResults = document.getElementById('search-results');
+            searchResults.classList.remove('pulse');
+            
+            if (data.error) {
+                searchResults.innerHTML = `<div class="no-results fade-in">Error: ${data.error}</div>`;
+            } else {
+                displaySearchResults(data.results, data.query);
+            }
+        });
+
+        ipcRenderer.on('built-in-docs-loaded', (event, docs) => {
+            loadBuiltInDocs(docs);
+        });
+
+        ipcRenderer.on('built-in-docs-error', (event, error) => {
+            document.getElementById('doc-categories').innerHTML = `<div class="no-results">Error loading docs: ${error}</div>`;
+        });
+
+        ipcRenderer.on('setting-saved', (event, { key, success, error }) => {
+            if (key === 'teamNumber') {
+                if (success) {
+                    console.log('Team number saved successfully');
+                    checkRobotConnection();
+                } else {
+                    alert(`Failed to save team number: ${error || 'Unknown error'}`);
                 }
             }
-            return 'Unavailable';
-        }
-
-        ipcRenderer.on('host-status', (event, status) => {
-            const hostStatus = document.getElementById('host-status');
-            hostStatus.textContent = `Host Status: ${status.connected ? `Connected to ${status.hostIP}` : 'Not Connected'}`;
         });
 
-        loadProjects();
+        ipcRenderer.on('check-updates-on-startup', () => {
+            checkForUpdates();
+        });
+
+        ipcRenderer.on('update-available', (event, updateInfo) => {
+            // Clear the checking status
+            const statusDiv = document.getElementById('update-status');
+            statusDiv.classList.remove('pulse');
+            statusDiv.innerHTML = '';
+            
+            showUpdateAvailable(updateInfo);
+        });
+
+        ipcRenderer.on('no-updates-available', (event, info) => {
+            console.log(`App is up to date (version ${info.currentVersion})`);
+            const statusDiv = document.getElementById('update-status');
+            statusDiv.classList.remove('pulse');
+            statusDiv.innerHTML = `App is up to date (version ${info.currentVersion})`;
+            statusDiv.style.color = '#4CAF50';
+            statusDiv.classList.add('fade-in');
+            
+            // Clear the message after 3 seconds
+            setTimeout(() => {
+                statusDiv.innerHTML = '';
+                statusDiv.classList.remove('fade-in');
+            }, 3000);
+        });
+
+        ipcRenderer.on('update-check-error', (event, error) => {
+            console.error('Failed to check for updates:', error.error);
+            const statusDiv = document.getElementById('update-status');
+            statusDiv.classList.remove('pulse');
+            statusDiv.innerHTML = `Failed to check for updates: ${error.error}`;
+            statusDiv.style.color = '#f44336';
+            statusDiv.classList.add('fade-in');
+            
+            // Clear the message after 5 seconds
+            setTimeout(() => {
+                statusDiv.innerHTML = '';
+                statusDiv.classList.remove('fade-in');
+            }, 5000);
+        });
+
+        ipcRenderer.on('update-status', (event, status) => {
+            const statusDiv = document.getElementById('update-status');
+            const installBtn = document.getElementById('install-update-btn');
+            
+            statusDiv.textContent = status.message;
+            
+            if (status.status === 'complete') {
+                statusDiv.style.color = '#4CAF50';
+                installBtn.textContent = 'Restart Required';
+                installBtn.onclick = () => {
+                    if (confirm('Restart the application to complete the update?')) {
+                        ipcRenderer.send('restart-app');
+                    }
+                };
+            } else if (status.status === 'error') {
+                statusDiv.style.color = '#f44336';
+                installBtn.disabled = false;
+                installBtn.textContent = 'Retry Update';
+            }
+        });
+
+        ipcRenderer.on('roborio-status', (event, status) => {
+            const robotStatus = document.getElementById('robot-status');
+            robotStatus.classList.remove('pulse');
+            
+            if (status.connected) {
+                robotStatus.innerHTML = `🟢 Robot Status: Connected to ${status.address}`;
+                robotStatus.style.color = '#4CAF50'; // Green
+                robotStatus.classList.add('fade-in');
+            } else {
+                robotStatus.innerHTML = `🔴 Robot Status: Disconnected (${status.error || 'Unable to reach roboRIO'})`;
+                robotStatus.style.color = '#f44336'; // Red
+                robotStatus.classList.add('fade-in');
+            }
+        });
+
+        setInterval(() => {
+            if (getTeamNumber()) {
+                checkRobotConnection();
+            }
+        }, 30000);
+
+        loadTeamNumber();
     </script>
 </body>
 </html>
