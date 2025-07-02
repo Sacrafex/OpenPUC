@@ -21,16 +21,15 @@
             50% { background-position: 100% 50%; }
             100% { background-position: 0% 50%; }
         }
-        
-        /* Hide scrollbars globally while keeping functionality */
+        /* Goodbye ugly scrollbars */
         * {
-            scrollbar-width: none; /* Firefox */
-            -ms-overflow-style: none; /* Internet Explorer 10+ */
+            scrollbar-width: none; /* For thy firefox people */
+            -ms-overflow-style: none; /* :/ I am suprised this is needed */
         }
         *::-webkit-scrollbar {
             width: 0;
             height: 0;
-            background: transparent; /* Chrome/Safari/Webkit */
+            background: transparent;
         }
         #header {
             background-color: #1e1e1e;
@@ -215,7 +214,7 @@
             color: #888;
             margin-left: 10px;
         }
-        /* Loading animations */
+        /* Loading animations fancy */
         .loading-spinner {
             display: inline-block;
             width: 16px;
@@ -392,18 +391,37 @@
 </head>
 <body>
     <div id="header">
-        <h1>OpenPUC</h1>
+        <!-- Animated Header -->
+        <h1 style="margin-top:10px">OpenPUC</h1>
         <p id="robot-status">Robot Status: Checking...</p>
     </div>
     <div id="main">
         <div id="update-section">
+            <!-- Update Div -->
             <h2>Update Available</h2>
             <div id="update-info" class="update-info"></div>
             <button id="install-update-btn" onclick="installUpdate()">Install Update</button>
             <button onclick="dismissUpdate()">Later</button>
             <div id="update-status" class="version-info" style="margin-top: 10px;"></div>
         </div>
+        <div id="settings">
+            <!-- Settings Div -->
+            <h2>Settings</h2>
+            <label for="team-number">Team Number:</label>
+            <input type="number" id="team-number" placeholder="Enter your FRC team number" />
+            <button onclick="saveTeamNumber()">Save</button>
+            <button onclick="checkRobotConnection()">Check Robot Connection</button>
+            <button onclick="checkForUpdates()">Check for Updates</button>
+            <div class="connection-info">
+                <strong>Connection attempts:</strong><br>
+                • mDNS: roboRIO-####-FRC.local<br>
+                • Static IP: 10.TE.AM.2<br>
+                • USB: 172.22.11.2<br>
+                • Alt mDNS: roborio-####-frc.local
+            </div>
+        </div>
         <div id="documentation-section">
+            <!-- Documentation Div -->
             <h2>Documentation</h2>
             <div class="doc-tabs">
                 <button class="tab-button active" onclick="switchTab('built-in')">Built-in Docs</button>
@@ -433,21 +451,6 @@
                     <button onclick="searchDocumentation()">Search</button>
                 </div>
                 <div id="search-results" class="doc-results"></div>
-            </div>
-        </div>
-        <div id="settings">
-            <h2>Settings</h2>
-            <label for="team-number">Team Number:</label>
-            <input type="number" id="team-number" placeholder="Enter your FRC team number" />
-            <button onclick="saveTeamNumber()">Save</button>
-            <button onclick="checkRobotConnection()">Check Robot Connection</button>
-            <button onclick="checkForUpdates()">Check for Updates</button>
-            <div class="connection-info">
-                <strong>Connection attempts:</strong><br>
-                • mDNS: roboRIO-####-FRC.local<br>
-                • Static IP: 10.TE.AM.2<br>
-                • USB: 172.22.11.2<br>
-                • Alt mDNS: roborio-####-frc.local
             </div>
         </div>
     </div>
