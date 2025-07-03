@@ -4,8 +4,22 @@ const { exec } = require('child_process');
 const fs = require('fs');
 const https = require('https');
 
+// Import FRC protocol and controller support
+const FRCProtocol = require('./frc-protocol');
+
 let mainWindow;
 let tray;
+
+// FRC Protocol instance
+let frcProtocol = null;
+let robotConnectionStatus = {
+  connected: false,
+  enabled: false,
+  mode: 'teleop',
+  batteryVoltage: 0.0,
+  signal: 0,
+  lastUpdate: null
+};
 
 // Storage file path
 const userDataPath = app.getPath('userData');
@@ -570,4 +584,121 @@ app.on('ready', () => {
       event.sender.send('built-in-docs-error', error.message);
     }
   });
+
+  // Initialize FRC Protocol and Controller Manager
+  initializeRobotSystems();
+
+  // Robot Control IPC Handlers
+  ipcMain.on('robot-connect', (event, robotIP) => {
+    if (frcProtocol) {
+      frcProtocol.connect(robotIP);
+      event.sender.send('robot-log', { message: `Connecting to robot at ${robotIP}...`, type: 'info' });
+    }
+  });
+
+  ipcMain.on('robot-disconnect', (event) => {
+    if (frcProtocol) {
+      frcProtocol.disconnect();
+      event.sender.send('robot-log', { message: 'Disconnected from robot', type: 'warning' });
+    }
+  });
+
+  ipcMain.on('robot-enable', (event) => {
+    if (frcProtocol) {
+      frcProtocol.setEnabled(true);
+      robotConnectionStatus.enabled = true;
+      event.sender.send('robot-state-update', robotConnectionStatus);
+      event.sender.send('robot-log', { message: 'Robot enabled', type: 'success' });
+    }
+  });
+
+  ipcMain.on('robot-disable', (event) => {
+    if (frcProtocol) {
+      frcProtocol.setEnabled(false);
+      robotConnectionStatus.enabled = false;
+      event.sender.send('robot-state-update', robotConnectionStatus);
+      event.sender.send('robot-log', { message: 'Robot disabled', type: 'warning' });
+    }
+  });
+
+  ipcMain.on('robot-mode-change', (event, mode) => {
+    if (frcProtocol) {
+      frcProtocol.setMode(mode);
+      robotConnectionStatus.mode = mode;
+      event.sender.send('robot-state-update', robotConnectionStatus);
+      event.sender.send('robot-log', { message: `Mode changed to ${mode}`, type: 'info' });
+    }
+  });
+
+  ipcMain.on('robot-protocol-year', (event, year) => {
+    event.sender.send('robot-log', { message: `Protocol year set to ${year}`, type: 'info' });
+  });
+
+  ipcMain.on('robot-emergency-stop', (event) => {
+    if (frcProtocol) {
+      frcProtocol.setEmergencyStop(true);
+      frcProtocol.setEnabled(false);
+      robotConnectionStatus.enabled = false;
+      event.sender.send('robot-state-update', robotConnectionStatus);
+      event.sender.send('robot-log', { message: 'EMERGENCY STOP ACTIVATED', type: 'error' });
+    }
+  });
+
+  // Controller IPC Handlers (controller polling happens in renderer process)
+  ipcMain.on('controller-input-update', (event, joystickData) => {
+    // Forward controller input to FRC protocol
+    if (frcProtocol && frcProtocol.isConnected()) {
+      frcProtocol.updateJoystick(joystickData.id, joystickData.axes, joystickData.buttons, joystickData.pov);
+    }
+  });
+
+  ipcMain.on('get-robot-status', (event) => {
+    event.sender.send('robot-state-update', robotConnectionStatus);
+  });
 });
+
+// Initialize Robot Control Systems
+function initializeRobotSystems() {
+  // Initialize FRC Protocol
+  frcProtocol = new FRCProtocol();
+  
+  frcProtocol.on('connected', () => {
+    robotConnectionStatus.connected = true;
+    robotConnectionStatus.lastUpdate = new Date();
+    mainWindow.webContents.send('robot-state-update', robotConnectionStatus);
+    mainWindow.webContents.send('robot-log', { message: 'Connected to robot', type: 'success' });
+  });
+  
+  frcProtocol.on('disconnected', () => {
+    robotConnectionStatus.connected = false;
+    robotConnectionStatus.enabled = false;
+    robotConnectionStatus.lastUpdate = new Date();
+    mainWindow.webContents.send('robot-state-update', robotConnectionStatus);
+    mainWindow.webContents.send('robot-log', { message: 'Disconnected from robot', type: 'error' });
+  });
+  
+  frcProtocol.on('robotStatus', (status) => {
+    robotConnectionStatus.batteryVoltage = status.batteryVoltage;
+    robotConnectionStatus.signal = status.wifiDB;
+    robotConnectionStatus.lastUpdate = new Date();
+    
+    mainWindow.webContents.send('robot-state-update', robotConnectionStatus);
+    
+    // Send detailed status for logging
+    mainWindow.webContents.send('robot-telemetry', {
+      batteryVoltage: status.batteryVoltage,
+      canUtilization: status.canUtilization,
+      wifiSignal: status.wifiDB,
+      wifiBandwidth: status.wifiMB,
+      brownedOut: status.brownedOut,
+      systemWatchdog: status.systemWatchdog
+    });
+  });
+  
+  frcProtocol.on('error', (error) => {
+    console.error('FRC Protocol Error:', error);
+    mainWindow.webContents.send('robot-log', { message: `Protocol error: ${error.message}`, type: 'error' });
+  });
+
+  console.log('FRC Protocol initialized');
+}

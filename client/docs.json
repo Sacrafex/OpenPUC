@@ -113,6 +113,122 @@
           "tags": ["java", "control", "if", "loop", "switch", "while", "for"]
         }
       ]
+    },
+    "controller_input": {
+      "name": "Controller Input",
+      "items": [
+        {
+          "title": "Xbox Controller Axis Setup",
+          "description": "Configure Xbox controller axis inputs for robot control",
+          "code": "// Create axis variables for different controller inputs\nprivate final int translationAxis = XboxController.Axis.kLeftY.value;\nprivate final int strafeAxis = XboxController.Axis.kLeftX.value;\nprivate final int rotationAxis = XboxController.Axis.kRightX.value;\n\n// Use in drive function\ndouble translation = driver.getRawAxis(translationAxis);\ndouble strafe = driver.getRawAxis(strafeAxis);\ndouble rotation = driver.getRawAxis(rotationAxis);",
+          "language": "java",
+          "tags": ["controller", "xbox", "axis", "input", "drivetrain"]
+        },
+        {
+          "title": "Xbox Controller Axis Types",
+          "description": "All available Xbox controller axis inputs",
+          "code": "// Left thumbstick axes\nXboxController.Axis.kLeftY.value;  // Left Thumbstick, Y Axis\nXboxController.Axis.kLeftX.value;  // Left Thumbstick, X Axis\n\n// Right thumbstick axes\nXboxController.Axis.kRightY.value; // Right Thumbstick, Y Axis\nXboxController.Axis.kRightX.value; // Right Thumbstick, X Axis\n\n// Trigger axes\nXboxController.Axis.kLeftTrigger.value;  // Left Trigger Button\nXboxController.Axis.kRightTrigger.value; // Right Trigger Button",
+          "language": "java",
+          "tags": ["controller", "xbox", "axis", "reference", "triggers"]
+        },
+        {
+          "title": "Xbox Controller Button Setup",
+          "description": "Configure Xbox controller button inputs for robot commands",
+          "code": "// Create button variables for robot functions\nprivate final JoystickButton zeroGyro = new JoystickButton(driver, XboxController.Button.kY.value);\nprivate final JoystickButton resetOdometry = new JoystickButton(driver, XboxController.Button.kA.value);\nprivate final JoystickButton toggleSlowMode = new JoystickButton(driver, XboxController.Button.kLeftBumper.value);\n\n// Bind buttons to commands in RobotContainer\nzeroGyro.onTrue(new InstantCommand(() -> swerve.zeroGyro()));\nresetOdometry.onTrue(new InstantCommand(() -> swerve.resetOdometry()));",
+          "language": "java",
+          "tags": ["controller", "xbox", "button", "joystickbutton", "commands"]
+        },
+        {
+          "title": "Xbox Controller Button Types",
+          "description": "All available Xbox controller button inputs",
+          "code": "// Face buttons\nXboxController.Button.kY.value;     // Y Button\nXboxController.Button.kB.value;     // B Button\nXboxController.Button.kA.value;     // A Button\nXboxController.Button.kX.value;     // X Button\n\n// Menu and bumper buttons\nXboxController.Button.kStart.value;       // Start Button\nXboxController.Button.kLeftBumper.value;  // Left Bumper\nXboxController.Button.kRightBumper.value; // Right Bumper",
+          "language": "java",
+          "tags": ["controller", "xbox", "button", "reference", "bumpers"]
+        }
+      ]
+    },
+    "programming_basics": {
+      "name": "Programming Basics",
+      "items": [
+        {
+          "title": "Access Modifiers",
+          "description": "Understanding Java access modifiers for FRC programming",
+          "code": "// Private - Restricts to only within the same class\nprivate CANSparkMax motor;\nprivate double speed;\n\n// Protected - Same packages and subclasses\nprotected void updateTelemetry() {\n    // Method accessible to subclasses\n}\n\n// Default (package-private) - Only within the same package\nvoid resetSensors() {\n    // No modifier = package-private\n}\n\n// Public - All open\npublic class Robot extends TimedRobot {\n    public void robotInit() {\n        // Accessible everywhere\n    }\n}",
+          "language": "java",
+          "tags": ["java", "access", "modifiers", "private", "public", "protected"]
+        },
+        {
+          "title": "Variable Keywords",
+          "description": "Important Java keywords for FRC robot programming",
+          "code": "// Final - A variable that cannot change after initialization\nprivate final int MOTOR_ID = 1;\nprivate final double MAX_SPEED = 1.0;\n\n// Static - Shared by all instances\npublic static final double WHEEL_DIAMETER = 0.1524; // meters\npublic static final int TEAM_NUMBER = 2839;\n\n// Abstract - Cannot be instantiated, used for base classes\nabstract class Subsystem {\n    public abstract void periodic();\n}\n\n// Example usage in robot code\npublic class Drivetrain extends Subsystem {\n    private final CANSparkMax leftMotor = new CANSparkMax(MOTOR_ID, MotorType.kBrushless);\n    \n    @Override\n    public void periodic() {\n        // Implementation required\n    }\n}",
+          "language": "java",
+          "tags": ["java", "final", "static", "abstract", "keywords", "constants"]
+        }
+      ]
+    },
+    "project_structure": {
+      "name": "Project Structure",
+      "items": [
+        {
+          "title": "Required Robot Files",
+          "description": "Essential files needed for an FRC robot project",
+          "code": "// Main.java - Define main class\npublic final class Main {\n    public static void main(String... args) {\n        RobotBase.startRobot(Robot::new);\n    }\n}\n\n// Robot.java - Place where code execution starts\npublic class Robot extends TimedRobot {\n    private Command m_autonomousCommand;\n    private RobotContainer m_robotContainer;\n    \n    @Override\n    public void robotInit() {\n        m_robotContainer = new RobotContainer();\n    }\n}",
+          "language": "java",
+          "tags": ["project", "structure", "main", "robot", "required"]
+        },
+        {
+          "title": "RobotContainer Setup",
+          "description": "Setting up RobotContainer for binding controls to functions",
+          "code": "// RobotContainer.java - Used for binding controls to functions\npublic class RobotContainer {\n    // Subsystems\n    private final Swerve m_swerve = new Swerve();\n    \n    // Controllers\n    private final XboxController driver = new XboxController(0);\n    \n    // Commands\n    private final TeleopSwerve m_teleopSwerve = new TeleopSwerve(\n        m_swerve,\n        () -> -driver.getLeftY(),\n        () -> -driver.getLeftX(),\n        () -> -driver.getRightX()\n    );\n    \n    public RobotContainer() {\n        m_swerve.setDefaultCommand(m_teleopSwerve);\n        configureButtonBindings();\n    }\n    \n    private void configureButtonBindings() {\n        new JoystickButton(driver, XboxController.Button.kY.value)\n            .onTrue(new InstantCommand(() -> m_swerve.zeroGyro()));\n    }\n}",
+          "language": "java",
+          "tags": ["robotcontainer", "controls", "binding", "subsystems", "commands"]
+        },
+        {
+          "title": "Constants File Organization",
+          "description": "Organizing robot constants for easy access and modification",
+          "code": "// Constants.java - Stores public values used in the code\npublic final class Constants {\n    // Drive Constants\n    public static final class DriveConstants {\n        public static final int FRONT_LEFT_DRIVE_ID = 1;\n        public static final int FRONT_RIGHT_DRIVE_ID = 2;\n        public static final int BACK_LEFT_DRIVE_ID = 3;\n        public static final int BACK_RIGHT_DRIVE_ID = 4;\n        \n        public static final double MAX_SPEED = 4.5; // meters per second\n        public static final double MAX_ANGULAR_SPEED = 2 * Math.PI; // radians per second\n    }\n    \n    // Controller Constants\n    public static final class ControllerConstants {\n        public static final int DRIVER_PORT = 0;\n        public static final int OPERATOR_PORT = 1;\n        public static final double DEADBAND = 0.1;\n    }\n    \n    // Physical Constants\n    public static final class PhysicalConstants {\n        public static final double WHEEL_DIAMETER = 0.1524; // meters\n        public static final double TRACK_WIDTH = 0.6096; // meters\n    }\n}",
+          "language": "java",
+          "tags": ["constants", "organization", "configuration", "drive", "controller"]
+        },
+        {
+          "title": "Common Imports",
+          "description": "Essential imports for FRC robot programming",
+          "code": "// WPILib Core Imports\nimport edu.wpi.first.wpilibj.TimedRobot;\nimport edu.wpi.first.wpilibj.XboxController;\nimport edu.wpi.first.wpilibj.Joystick;\nimport edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;\n\n// Command Framework Imports\nimport edu.wpi.first.wpilibj2.command.Command;\nimport edu.wpi.first.wpilibj2.command.CommandBase;\nimport edu.wpi.first.wpilibj2.command.button.JoystickButton;\nimport edu.wpi.first.wpilibj2.command.SubsystemBase;\n\n// Motor Controller Imports\nimport com.revrobotics.CANSparkMax;\nimport com.revrobotics.CANSparkMaxLowLevel.MotorType;\nimport com.ctre.phoenix.motorcontrol.can.TalonFX;\n\n// Project-specific Imports\nimport frc.robot.commands.TeleopSwerve;\nimport frc.robot.subsystems.Swerve;\nimport frc.robot.Constants;",
+          "language": "java",
+          "tags": ["imports", "wpilibj", "commands", "motors", "project"]
+        }
+      ]
+    },
+    "swerve_drive": {
+      "name": "Swerve Drive",
+      "items": [
+        {
+          "title": "Swerve Module Setup",
+          "description": "Basic swerve module configuration and control",
+          "code": "// SwerveModule.java - Hooks up controls to drive chain\npublic class SwerveModule {\n    private final CANSparkMax driveMotor;\n    private final CANSparkMax angleMotor;\n    private final RelativeEncoder driveEncoder;\n    private final AbsoluteEncoder angleEncoder;\n    private final SparkMaxPIDController angleController;\n    \n    public SwerveModule(int driveID, int angleID, double angleOffset) {\n        driveMotor = new CANSparkMax(driveID, MotorType.kBrushless);\n        angleMotor = new CANSparkMax(angleID, MotorType.kBrushless);\n        \n        driveEncoder = driveMotor.getEncoder();\n        angleEncoder = angleMotor.getAbsoluteEncoder(Type.kDutyCycle);\n        angleController = angleMotor.getPIDController();\n        \n        configureDevices();\n    }\n    \n    public void setDesiredState(SwerveModuleState desiredState) {\n        // Optimize and set module state\n        SwerveModuleState state = SwerveModuleState.optimize(desiredState, getState().angle);\n        \n        driveMotor.set(state.speedMetersPerSecond / Constants.MAX_SPEED);\n        angleController.setReference(state.angle.getDegrees(), ControlType.kPosition);\n    }\n}",
+          "language": "java",
+          "tags": ["swerve", "module", "drive", "angle", "pid"]
+        },
+        {
+          "title": "TeleopSwerve Command",
+          "description": "Teleop control command for swerve drivetrain",
+          "code": "// TeleopSwerve.java - Controls drive chain during teleop\npublic class TeleopSwerve extends CommandBase {\n    private final Swerve swerve;\n    private final DoubleSupplier translationSup;\n    private final DoubleSupplier strafeSup;\n    private final DoubleSupplier rotationSup;\n    \n    public TeleopSwerve(Swerve swerve, DoubleSupplier translation, \n                       DoubleSupplier strafe, DoubleSupplier rotation) {\n        this.swerve = swerve;\n        this.translationSup = translation;\n        this.strafeSup = strafe;\n        this.rotationSup = rotation;\n        addRequirements(swerve);\n    }\n    \n    @Override\n    public void execute() {\n        // Get controller inputs\n        double translation = translationSup.getAsDouble();\n        double strafe = strafeSup.getAsDouble();\n        double rotation = rotationSup.getAsDouble();\n        \n        // Apply deadband\n        translation = Math.abs(translation) < Constants.DEADBAND ? 0 : translation;\n        strafe = Math.abs(strafe) < Constants.DEADBAND ? 0 : strafe;\n        rotation = Math.abs(rotation) < Constants.DEADBAND ? 0 : rotation;\n        \n        // Drive the robot\n        swerve.drive(translation, strafe, rotation, true);\n    }\n}",
+          "language": "java",
+          "tags": ["teleop", "swerve", "command", "drive", "controller"]
+        }
+      ]
+    },
+    "smart_dashboard": {
+      "name": "Smart Dashboard",
+      "items": [
+        {
+          "title": "Basic SmartDashboard Usage",
+          "description": "Display robot information in the SmartDashboard GUI",
+          "code": "// Import SmartDashboard\nimport edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;\n\n// Put values to dashboard\nSmartDashboard.putNumber(\"Robot Speed\", getCurrentSpeed());\nSmartDashboard.putBoolean(\"Target Found\", hasTarget());\nSmartDashboard.putString(\"Robot Mode\", getCurrentMode());\n\n// Get values from dashboard\ndouble maxSpeed = SmartDashboard.getNumber(\"Max Speed\", 1.0);\nboolean enableAuto = SmartDashboard.getBoolean(\"Enable Auto\", false);\nString selectedAuto = SmartDashboard.getString(\"Auto Mode\", \"Default\");\n\n// Create chooser for autonomous selection\nSendableChooser<Command> autoChooser = new SendableChooser<>();\nautoChooser.setDefaultOption(\"Default Auto\", new DefaultAuto());\nautoChooser.addOption(\"Custom Auto\", new CustomAuto());\nSmartDashboard.putData(\"Auto Chooser\", autoChooser);",
+          "language": "java",
+          "tags": ["smartdashboard", "gui", "telemetry", "chooser", "debugging"]
+        }
+      ]
     }
   }
 }

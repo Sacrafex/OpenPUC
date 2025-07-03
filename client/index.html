@@ -119,24 +119,55 @@
             border-radius: 5px;
         }
         #search-input {
-            width: calc(100% - 120px);
-            margin-right: 10px;
+            flex: 1;
+            min-width: 200px;
+            padding: 8px 12px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 6px;
+            color: #fff;
+            font-size: 14px;
+            transition: all 0.2s ease;
+        }
+        
+        #search-input:focus {
+            outline: none;
+            border-color: #bb86fc;
+            box-shadow: 0 0 0 3px rgba(187, 134, 252, 0.1);
+            background: rgba(255, 255, 255, 0.08);
         }
         .doc-results {
             margin-top: 15px;
+            max-height: 400px;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: #555 transparent;
+        }
+        
+        .doc-results::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .doc-results::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        
+        .doc-results::-webkit-scrollbar-thumb {
+            background: #555;
+            border-radius: 3px;
         }
         .doc-item {
-            background-color: #1e1e1e;
-            border: 1px solid #333;
-            border-radius: 5px;
-            padding: 12px;
-            margin-bottom: 10px;
-            cursor: pointer;
-            transition: background-color 0.2s;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 6px;
+            padding: 15px;
+            margin-bottom: 15px;
+            transition: all 0.3s ease;
         }
         .doc-item:hover {
-            background-color: #2a2a2a;
-            border-color: #bb86fc;
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(0, 212, 170, 0.3);
+            transform: translateY(-2px);
         }
         .doc-item h4 {
             margin: 0 0 5px 0;
@@ -151,8 +182,52 @@
             text-align: center;
             color: #888;
             font-style: italic;
-            padding: 20px;
+            padding: 40px 20px;
+            font-size: 14px;
         }
+        
+        .loading-dots {
+            position: relative;
+        }
+        
+        .loading-dots::after {
+            content: '';
+            display: inline-block;
+            width: 0;
+            animation: dots 1.5s infinite;
+        }
+        
+        @keyframes dots {
+            0%, 20% { content: ''; }
+            40% { content: '.'; }
+            60% { content: '..'; }
+            80%, 100% { content: '...'; }
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.6s ease-out forwards;
+        }
+        
+        .code-example {
+            opacity: 0;
+            animation: fadeIn 0.6s ease-out forwards;
+        }
+        
+        .code-example:nth-child(2) { animation-delay: 0.1s; }
+        .code-example:nth-child(3) { animation-delay: 0.2s; }
+        .code-example:nth-child(4) { animation-delay: 0.3s; }
+        .code-example:nth-child(5) { animation-delay: 0.4s; }
         .doc-tabs {
             display: flex;
             margin-bottom: 15px;
@@ -179,175 +254,336 @@
         }
         .tab-content {
             display: none;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.3s ease;
         }
         .tab-content.active {
             display: block;
+            opacity: 1;
+            transform: translateY(0);
         }
-        .built-in-docs {
-            display: grid;
-            grid-template-columns: 250px 1fr;
-            gap: 20px;
-            height: 400px;
-        }
-        .doc-categories {
-            border-right: 1px solid #333;
-            padding-right: 15px;
-            overflow-y: auto;
-        }
-        .doc-categories::-webkit-scrollbar,
-        .doc-content::-webkit-scrollbar {
-            width: 0px;
-            background: transparent;
+        
+        /* Initialize the first tab properly */
+        #built-in-tab.active {
+            opacity: 1 !important;
+            transform: translateY(0) !important;
         }
         .built-in-search {
             margin-bottom: 15px;
             display: flex;
             gap: 10px;
             align-items: center;
+            padding: 12px;
+            background: rgba(0, 0, 0, 0.1);
+            border-radius: 6px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
+        
         #built-in-search-input {
             flex: 1;
             min-width: 200px;
+            padding: 8px 12px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 6px;
+            color: #fff;
+            font-size: 14px;
+            transition: all 0.2s ease;
         }
+        
+        #built-in-search-input:focus {
+            outline: none;
+            border-color: #bb86fc;
+            box-shadow: 0 0 0 3px rgba(187, 134, 252, 0.1);
+            background: rgba(255, 255, 255, 0.08);
+        }
+        
         .search-results-info {
             font-size: 12px;
-            color: #888;
+            color: #00D4AA;
             margin-left: 10px;
+            font-weight: 500;
+            padding: 4px 8px;
+            background: rgba(0, 212, 170, 0.1);
+            border-radius: 4px;
+            border: 1px solid rgba(0, 212, 170, 0.2);
         }
-        /* Loading animations fancy */
-        .loading-spinner {
-            display: inline-block;
-            width: 16px;
-            height: 16px;
-            border: 2px solid #333;
-            border-radius: 50%;
-            border-top-color: #bb86fc;
-            animation: spin 1s ease-in-out infinite;
-            margin-right: 8px;
+        
+        .built-in-docs {
+            display: grid;
+            grid-template-columns: 200px 1fr;
+            gap: 20px;
+            height: 400px;
+            border: 1px solid #333;
+            border-radius: 6px;
+            overflow: hidden;
+            background: rgba(255, 255, 255, 0.02);
         }
-        .loading-dots::after {
-            content: '';
-            animation: dots 1.5s steps(4, end) infinite;
-        }
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-        @keyframes dots {
-            0%, 20% { content: ''; }
-            40% { content: '.'; }
-            60% { content: '..'; }
-            80%, 100% { content: '...'; }
-        }
-        .pulse {
-            animation: pulse 2s infinite;
-        }
-        @keyframes pulse {
-            0% { opacity: 1; }
-            50% { opacity: 0.5; }
-            100% { opacity: 1; }
-        }
-        .fade-in {
-            animation: fadeIn 0.5s ease-in;
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        .slide-in {
-            animation: slideIn 0.3s ease-out;
-        }
-        @keyframes slideIn {
-            from { transform: translateX(-100%); }
-            to { transform: translateX(0); }
-        }
-        .category-item {
-            padding: 10px;
-            cursor: pointer;
-            border-radius: 5px;
-            margin-bottom: 5px;
-            transition: background-color 0.2s;
-        }
-        .category-item:hover {
-            background-color: #2a2a2a;
-        }
-        .category-item.active {
-            background-color: #bb86fc;
-            color: #121212;
-        }
-        .doc-content {
+        
+        .doc-categories {
+            background: rgba(0, 0, 0, 0.2);
+            border-right: 1px solid #333;
+            padding: 15px;
             overflow-y: auto;
-            padding-left: 15px;
+            scrollbar-width: thin;
+            scrollbar-color: #555 transparent;
         }
-        .doc-content::-webkit-scrollbar {
-            width: 0px;
+        
+        .doc-categories::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .doc-categories::-webkit-scrollbar-track {
             background: transparent;
         }
+        
+        .doc-categories::-webkit-scrollbar-thumb {
+            background: #555;
+            border-radius: 3px;
+        }
+        
+        .category-item {
+            padding: 12px 15px;
+            cursor: pointer;
+            border-radius: 6px;
+            margin-bottom: 8px;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 14px;
+            color: #e0e0e0;
+        }
+        
+        .category-item:hover {
+            background: rgba(187, 134, 252, 0.15);
+            border-color: rgba(187, 134, 252, 0.3);
+            transform: translateX(4px);
+            box-shadow: 0 2px 12px rgba(187, 134, 252, 0.2);
+        }
+        
+        .category-item.active {
+            background: linear-gradient(135deg, #bb86fc, #9c5dfc);
+            color: #000;
+            font-weight: 600;
+            border-color: #bb86fc;
+            transform: translateX(4px);
+            box-shadow: 0 4px 16px rgba(187, 134, 252, 0.4);
+        }
+        
+        .doc-content {
+            overflow-y: auto;
+            padding: 15px;
+            scrollbar-width: thin;
+            scrollbar-color: #555 transparent;
+        }
+        
+        .doc-content::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .doc-content::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        
+        .doc-content::-webkit-scrollbar-thumb {
+            background: #555;
+            border-radius: 3px;
+        }
+        
         .code-example {
-            background-color: #1a1a1a;
-            border: 1px solid #333;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
             border-radius: 8px;
             margin-bottom: 20px;
             overflow: hidden;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         }
+        
+        .code-example:hover {
+            background: rgba(255, 255, 255, 0.06);
+            border-color: rgba(187, 134, 252, 0.3);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(187, 134, 252, 0.15);
+        }
+        
         .code-header {
-            background-color: #2a2a2a;
-            padding: 10px 15px;
+            background: rgba(0, 0, 0, 0.2);
+            padding: 12px 16px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 1px solid #333;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
+        
         .code-title {
-            font-weight: bold;
+            font-weight: 600;
             color: #bb86fc;
+            font-size: 15px;
         }
+        
         .copy-button {
-            background-color: #333;
-            border: none;
-            color: #bb86fc;
-            padding: 5px 10px;
-            border-radius: 3px;
+            background: rgba(0, 212, 170, 0.15);
+            border: 1px solid rgba(0, 212, 170, 0.3);
+            color: #00D4AA;
+            padding: 6px 12px;
+            border-radius: 6px;
             cursor: pointer;
             font-size: 12px;
-            transition: all 0.2s ease;
+            font-weight: 500;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            gap: 6px;
         }
+        
         .copy-button:hover {
-            background-color: #444;
+            background: rgba(0, 212, 170, 0.25);
+            border-color: rgba(0, 212, 170, 0.5);
             transform: translateY(-1px);
-            box-shadow: 0 2px 8px rgba(187, 134, 252, 0.3);
+            box-shadow: 0 4px 12px rgba(0, 212, 170, 0.3);
         }
+        
         .copy-button.copied {
-            background-color: #4CAF50;
-            color: white;
-            transform: scale(1.1);
+            background: rgba(76, 175, 80, 0.2);
+            border-color: rgba(76, 175, 80, 0.5);
+            color: #4CAF50;
+            transform: scale(1.05);
         }
+        
         .code-description {
-            padding: 10px 15px;
-            color: #ccc;
+            padding: 12px 16px;
+            color: #e0e0e0;
             font-size: 14px;
-            border-bottom: 1px solid #333;
+            line-height: 1.5;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
+        
         .code-block {
-            padding: 15px;
-            font-family: 'Courier New', monospace;
+            padding: 16px;
+            font-family: 'Courier New', 'Monaco', 'Menlo', monospace;
             font-size: 13px;
             line-height: 1.5;
             color: #f8f8f2;
+            background: rgba(0, 0, 0, 0.3);
             overflow-x: auto;
+            border-left: 3px solid #bb86fc;
         }
+        
         .code-tags {
-            padding: 10px 15px;
-            border-top: 1px solid #333;
+            padding: 12px 16px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(0, 0, 0, 0.1);
         }
+        
         .tag {
             display: inline-block;
-            background-color: #333;
-            color: #bb86fc;
-            padding: 2px 8px;
+            background: rgba(0, 212, 170, 0.15);
+            color: #00D4AA;
+            padding: 4px 10px;
             border-radius: 12px;
             font-size: 11px;
-            margin-right: 5px;
-            margin-bottom: 5px;
+            font-weight: 500;
+            margin-right: 6px;
+            margin-bottom: 6px;
+            border: 1px solid rgba(0, 212, 170, 0.3);
+        }
+
+        /* Robot Log Styles */
+        .robot-log {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid #444;
+            border-radius: 4px;
+            padding: 10px;
+            height: 200px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            line-height: 1.4;
+        }
+
+        .log-entry {
+            margin-bottom: 4px;
+            padding: 2px 0;
+        }
+
+        .log-timestamp {
+            color: #888;
+            margin-right: 8px;
+        }
+
+        .log-info {
+            color: #ccc;
+        }
+
+        .log-success {
+            color: #4CAF50;
+        }
+
+        .log-warning {
+            color: #ff9800;
+        }
+
+        .log-error {
+            color: #f44336;
+        }
+
+        /* Robot State Styles */
+        .robot-state-container {
+            text-align: center;
+        }
+
+        .robot-state-indicator {
+            margin-bottom: 10px;
+        }
+
+        .state-dot {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 8px;
+            animation: pulse 2s infinite;
+        }
+
+        .state-dot.enabled {
+            background: #4CAF50;
+            box-shadow: 0 0 10px rgba(76, 175, 80, 0.5);
+        }
+
+        .state-dot.disabled {
+            background: #757575;
+            box-shadow: 0 0 10px rgba(117, 117, 117, 0.3);
+        }
+
+        /* Mode Selector */
+        .mode-selector {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        .mode-button {
+            flex: 1;
+            padding: 8px 12px;
+            background: #333;
+            color: #ccc;
+            border: 1px solid #555;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .mode-button:hover {
+            background: #444;
+            color: #bb86fc;
+        }
+
+        .mode-button.active {
+            background: linear-gradient(135deg, #bb86fc, #a374e8);
+            color: #121212;
+            border-color: #bb86fc;
         }
         #projects {
             margin-top: 20px;
@@ -387,6 +623,315 @@
             align-items: center;
             margin-bottom: 10px;
         }
+        
+        /* Robot Control Section Styles */
+        #robot-control-section {
+            margin-bottom: 20px;
+            padding: 15px;
+            border: 1px solid #333;
+            border-radius: 5px;
+        }
+        
+        .control-group {
+            margin-bottom: 15px;
+            padding: 10px;
+            border: 1px solid #444;
+            border-radius: 4px;
+            background-color: rgba(30, 30, 30, 0.5);
+        }
+        
+        .control-group h3 {
+            margin: 0 0 10px 0;
+            color: #bb86fc;
+            font-size: 16px;
+        }
+        
+        .control-buttons {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+        
+        .control-buttons button {
+            flex: 1;
+            padding: 6px 12px;
+            min-width: 70px;
+            font-size: 13px;
+            font-weight: 500;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+        }
+        
+        .enable-btn {
+            background: linear-gradient(135deg, #4CAF50, #45a049) !important;
+            color: white !important;
+            border: 1px solid #4CAF50 !important;
+            box-shadow: 0 2px 4px rgba(76, 175, 80, 0.3);
+        }
+        
+        .enable-btn:hover {
+            background: linear-gradient(135deg, #45a049, #3d8b40) !important;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(76, 175, 80, 0.4);
+        }
+        
+        .disable-btn {
+            background: linear-gradient(135deg, #bb86fc, #a374e8) !important;
+            color: #121212 !important;
+            border: 1px solid #bb86fc !important;
+            box-shadow: 0 2px 4px rgba(187, 134, 252, 0.3);
+        }
+        
+        .disable-btn:hover {
+            background: linear-gradient(135deg, #a374e8, #9c64e2) !important;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(187, 134, 252, 0.4);
+        }
+        
+        /* Connection Controls */
+        .connection-controls {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .connection-input {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        
+        .connection-input label {
+            min-width: 60px;
+            color: #ccc;
+            font-size: 14px;
+        }
+        
+        .connection-input input {
+            flex: 1;
+            min-width: 120px;
+            padding: 6px 10px;
+            background: #2a2a2a;
+            border: 1px solid #444;
+            border-radius: 4px;
+            color: #fff;
+            font-size: 14px;
+        }
+        
+        .connection-input button {
+            padding: 6px 12px;
+            font-size: 13px;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+        }
+        
+        #connect-btn {
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            color: white;
+            border: 1px solid #4CAF50;
+        }
+        
+        #disconnect-btn {
+            background: linear-gradient(135deg, #f44336, #d32f2f);
+            color: white;
+            border: 1px solid #f44336;
+        }
+        
+        .connection-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+        }
+        
+        .status-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            display: inline-block;
+            animation: pulse 2s infinite;
+        }
+        
+        .status-indicator.connected {
+            background: #4CAF50;
+            box-shadow: 0 0 6px rgba(76, 175, 80, 0.6);
+        }
+        
+        .status-indicator.disconnected {
+            background: #f44336;
+            box-shadow: 0 0 6px rgba(244, 67, 54, 0.6);
+        }
+        
+        /* Controller Controls */
+        .controller-section {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .controller-selector {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        
+        .controller-selector label {
+            min-width: 110px;
+            color: #ccc;
+            font-size: 14px;
+        }
+        
+        .controller-selector select {
+            flex: 1;
+            min-width: 180px;
+            padding: 6px 10px;
+            background: #2a2a2a;
+            border: 1px solid #444;
+            border-radius: 4px;
+            color: #fff;
+            font-size: 14px;
+        }
+        
+        .controller-settings {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .setting-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .setting-row label {
+            min-width: 70px;
+            color: #ccc;
+            font-size: 14px;
+        }
+        
+        .setting-row input[type="range"] {
+            flex: 1;
+            min-width: 100px;
+        }
+        
+        .controller-test button {
+            padding: 6px 12px;
+            background: linear-gradient(135deg, #bb86fc, #a374e8);
+            color: #121212;
+            border: 1px solid #bb86fc;
+            border-radius: 4px;
+            font-size: 13px;
+            transition: all 0.3s ease;
+        }
+        
+        .controller-status {
+            margin-top: 10px;
+            padding: 10px;
+            background: rgba(40, 40, 40, 0.5);
+            border-radius: 4px;
+            border: 1px solid #444;
+        }
+        
+        .controller-display {
+            display: flex;
+            gap: 20px;
+        }
+        
+        .axes-display, .buttons-display {
+            flex: 1;
+        }
+        
+        .axes-display h4, .buttons-display h4 {
+            margin: 0 0 8px 0;
+            color: #bb86fc;
+            font-size: 14px;
+        }
+        
+        #axes-values, #button-values {
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            color: #ccc;
+            line-height: 1.4;
+        }
+        
+        /* Telemetry Display */
+        .telemetry-display {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 10px;
+        }
+        
+        .telemetry-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 8px;
+            background: rgba(40, 40, 40, 0.5);
+            border-radius: 4px;
+            border: 1px solid #444;
+            text-align: center;
+        }
+        
+        .telemetry-label {
+            font-size: 12px;
+            color: #888;
+            margin-bottom: 4px;
+        }
+        
+        .telemetry-value {
+            font-size: 14px;
+            font-weight: bold;
+            color: #bb86fc;
+            font-family: 'Courier New', monospace;
+        }
+        
+        /* Emergency Controls */
+        .emergency-controls {
+            display: flex;
+            justify-content: center;
+        }
+        
+        .emergency-stop-btn {
+            padding: 12px 24px !important;
+            background: linear-gradient(135deg, #ff1744, #d50000) !important;
+            color: white !important;
+            border: 2px solid #ff1744 !important;
+            border-radius: 6px !important;
+            font-size: 16px !important;
+            font-weight: bold !important;
+            text-transform: uppercase !important;
+            letter-spacing: 1px !important;
+            box-shadow: 0 4px 8px rgba(255, 23, 68, 0.4) !important;
+            transition: all 0.3s ease !important;
+        }
+        
+        .emergency-stop-btn:hover {
+            background: linear-gradient(135deg, #d50000, #b71c1c) !important;
+            transform: translateY(-2px) !important;
+            box-shadow: 0 6px 12px rgba(255, 23, 68, 0.6) !important;
+        }
+        
+        .emergency-stop-btn:active {
+            transform: translateY(0) !important;
+            box-shadow: 0 2px 4px rgba(255, 23, 68, 0.4) !important;
+        }
+
+        .category-item.active {
+            background-color: #bb86fc;
+            color: #121212;
+        }
+
+        .category-item-highlighted {
+            opacity: 1;
+            border-left: 3px solid #bb86fc;
+        }
+
+        .category-item-dimmed {
+            opacity: 0.5;
+        }
     </style>
 </head>
 <body>
@@ -397,7 +942,7 @@
     </div>
     <div id="main">
         <div id="update-section">
-            <!-- Update Div -->
+            <!-- update section -->
             <h2>Update Available</h2>
             <div id="update-info" class="update-info"></div>
             <button id="install-update-btn" onclick="installUpdate()">Install Update</button>
@@ -405,7 +950,7 @@
             <div id="update-status" class="version-info" style="margin-top: 10px;"></div>
         </div>
         <div id="settings">
-            <!-- Settings Div -->
+            <!-- settings section -->
             <h2>Settings</h2>
             <label for="team-number">Team Number:</label>
             <input type="number" id="team-number" placeholder="Enter your FRC team number" />
@@ -420,9 +965,155 @@
                 • Alt mDNS: roborio-####-frc.local
             </div>
         </div>
+        <div id="robot-control-section">
+            <!-- robot control section -->
+            <h2>Robot Control</h2>
+            
+            <div class="control-group">
+                <h3>Robot State</h3>
+                <div class="robot-state-container">
+                    <div class="robot-state-indicator">
+                        <div class="state-dot disabled" id="state-dot"></div>
+                        <center><span id="robot-state-text">Disabled</span></center>
+                        <br>
+                    </div>
+                    <div class="control-buttons">
+                        <button class="enable-btn" onclick="enableRobot()">Enable</button>
+                        <button class="disable-btn" onclick="disableRobot()">Disable</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="control-group">
+                <h3>Mode</h3>
+                <div class="mode-selector">
+                    <button class="mode-button active" onclick="setMode('teleop')" id="teleop-btn">Teleop</button>
+                    <button class="mode-button" onclick="setMode('auto')" id="auto-btn">Autonomous</button>
+                    <button class="mode-button" onclick="setMode('test')" id="test-btn">Test</button>
+                </div>
+                <div id="mode-status" style="font-size: 12px; color: #888; margin-top: 5px;">
+                    Current mode: Teleop
+                </div>
+            </div>
+            
+            <div class="control-group">
+                <h3>Robot Connection</h3>
+                <div class="connection-controls">
+                    <div class="connection-input">
+                        <label for="robot-ip">Robot IP:</label>
+                        <input type="text" id="robot-ip" value="10.0.0.2" placeholder="10.TE.AM.2">
+                        <button onclick="connectToRobot()" id="connect-btn">Connect</button>
+                        <button onclick="disconnectFromRobot()" id="disconnect-btn">Disconnect</button>
+                    </div>
+                    <div class="connection-status" id="connection-status">
+                        <span class="status-indicator disconnected" id="connection-indicator"></span>
+                        <span id="connection-text">Disconnected</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="control-group">
+                <h3>Controller Settings <span style="font-size: 12px; color: #888;">
+                        Supported: Xbox, PS4
+                    </span></h3>
+                
+                <div class="controller-section">
+                    <div class="controller-selector">
+                        <label for="controller-select">Active Controller:</label>
+                        <select id="controller-select" onchange="selectController()">
+                            <option value="">No controllers detected</option>
+                        </select>
+                        <button onclick="refreshControllers()">Refresh</button>
+                    </div>
+                    <div class="controller-settings">
+                        <div class="setting-row">
+                            <label for="deadzone-slider">Deadzone:</label>
+                            <input type="range" id="deadzone-slider" min="0" max="0.5" step="0.01" value="0.1" onchange="updateDeadzone()">
+                            <span id="deadzone-value">0.10</span>
+                        </div>
+                        <div class="controller-test">
+                            <button onclick="testControllerVibration()">Test Vibration</button>
+                        </div>
+                    </div>
+                    <div class="controller-status" id="controller-status">
+                        <div class="controller-display">
+                            <div class="axes-display">
+                                <h4>Axes</h4>
+                                <div id="axes-values"></div>
+                            </div>
+                            <div class="buttons-display">
+                                <h4>Buttons</h4>
+                                <div id="button-values"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="control-group">
+                <h3>Protocol Settings</h3>
+                <div class="protocol-selector">
+                    <label for="protocol-year">Protocol Year:</label>
+                    <select id="protocol-year" onchange="changeProtocolYear()">
+                        <option value="2024" selected>2024</option>
+                    </select>
+                    <span style="font-size: 12px; color: #888; margin-left: 10px;">
+                        2024
+                    </span>
+                </div>
+            </div>
+            
+            <div class="control-group">
+                <h3>Robot Telemetry</h3>
+                <div class="telemetry-display" id="telemetry-display">
+                    <div class="telemetry-item">
+                        <span class="telemetry-label">Battery:</span>
+                        <span class="telemetry-value" id="battery-voltage">--.-V</span>
+                    </div>
+                    <div class="telemetry-item">
+                        <span class="telemetry-label">Signal:</span>
+                        <span class="telemetry-value" id="wifi-signal">-- dB</span>
+                    </div>
+                    <div class="telemetry-item">
+                        <span class="telemetry-label">CAN:</span>
+                        <span class="telemetry-value" id="can-utilization">--%</span>
+                    </div>
+                    <div class="telemetry-item">
+                        <span class="telemetry-label">Bandwidth:</span>
+                        <span class="telemetry-value" id="wifi-bandwidth">-- MB/s</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="control-group">
+                <h3>Emergency Controls</h3>
+                <div class="emergency-controls">
+                    <button class="emergency-stop-btn" onclick="emergencyStop()">
+                        🛑 EMERGENCY STOP
+                    </button>
+                </div>
+            </div>
+            
+            <div class="control-group">
+                <h3>Live Robot Log</h3>
+                <div class="robot-log" id="robot-log">
+                    <div class="log-entry log-info">
+                        <span class="log-timestamp">[00:00:00]</span> Robot control system initialized
+                    </div>
+                    <div class="log-entry">
+                        <span class="log-timestamp">[00:00:01]</span> Waiting for robot connection...
+                    </div>
+                </div>
+                <div style="margin-top: 10px;">
+                    <button onclick="clearRobotLog()">Clear Log</button>
+                    <button onclick="toggleLogAutoScroll()" id="autoscroll-btn">Auto-scroll: ON</button>
+                </div>
+            </div>
+        </div>
         <div id="documentation-section">
-            <!-- Documentation Div -->
-            <h2>Documentation</h2>
+            <h2 style="color: #bb86fc; margin-bottom: 15px; display: flex; align-items: center; gap: 10px;">
+                📚 Documentation
+            </h2>
             <div class="doc-tabs">
                 <button class="tab-button active" onclick="switchTab('built-in')">Built-in Docs</button>
                 <button class="tab-button" onclick="switchTab('external')">External Search</button>
@@ -430,7 +1121,7 @@
             
             <div id="built-in-tab" class="tab-content active">
                 <div class="built-in-search">
-                    <input type="text" id="built-in-search-input" placeholder="Search documentation (e.g., 'motor', 'pid', 'encoder')" />
+                    <input type="text" id="built-in-search-input" placeholder="🔍 Search docs (motor, pid, encoder, drivetrain...)" oninput="searchBuiltInDocs()" onkeypress="if(event.key==='Enter') searchBuiltInDocs()" />
                     <button onclick="searchBuiltInDocs()">Search</button>
                     <button onclick="clearBuiltInSearch()">Clear</button>
                     <span class="search-results-info" id="search-info"></span>
@@ -446,8 +1137,8 @@
             </div>
             
             <div id="external-tab" class="tab-content">
-                <div style="display: flex; align-items: center; margin-bottom: 15px;">
-                    <input type="text" id="search-input" placeholder="Search FRC documentation (e.g., 'motor control', 'vision processing')" />
+                <div class="built-in-search">
+                    <input type="text" id="search-input" placeholder="Search FRC documentation (e.g., 'motor control', 'vision processing')" onkeypress="if(event.key==='Enter') searchDocumentation()" />
                     <button onclick="searchDocumentation()">Search</button>
                 </div>
                 <div id="search-results" class="doc-results"></div>
@@ -456,6 +1147,60 @@
     </div>
     <script>
         const { ipcRenderer } = require('electron');
+
+        // import controller manager for renderer process
+        const { RendererControllerManager } = require('./controller-manager');
+        
+        // initialize controller manager in renderer
+        let controllerManager = null;
+        let controllerInitialized = false;
+        
+        // initialize controller system
+        function initializeControllerSystem() {
+            if (!controllerInitialized) {
+                try {
+                    controllerManager = new RendererControllerManager();
+                    
+                    controllerManager.on('controllerConnected', (controller) => {
+                        addLogEntry(`Controller connected: ${controller.name}`, 'success');
+                        updateControllerList(controllerManager.getConnectedControllers());
+                    });
+                    
+                    controllerManager.on('controllerDisconnected', (id) => {
+                        addLogEntry(`Controller ${id} disconnected`, 'warning');
+                        updateControllerList(controllerManager.getConnectedControllers());
+                    });
+                    
+                    controllerManager.on('controllerUpdate', (data) => {
+                        // forward to main process for robot control
+                        ipcRenderer.send('controller-input-update', data);
+                        
+                        // update ui display
+                        updateControllerDisplay(data.id, data);
+                    });
+                    
+                    controllerManager.on('error', (error) => {
+                        console.error('Controller error:', error);
+                        addLogEntry(`Controller error: ${error.message}`, 'error');
+                    });
+
+                    if (controllerManager.initialize()) {
+                        controllerInitialized = true;
+                        addLogEntry('Controller system initialized', 'info');
+                        
+                        // Update controller list after initialization
+                        setTimeout(() => {
+                            updateControllerList(controllerManager.getConnectedControllers());
+                        }, 500);
+                    } else {
+                        addLogEntry('Controller system initialization failed', 'error');
+                    }
+                } catch (error) {
+                    console.error('Failed to initialize controller system:', error);
+                    addLogEntry('Controller system initialization failed', 'error');
+                }
+            }
+        }
 
         function searchDocumentation() {
             const query = document.getElementById('search-input').value.trim();
@@ -496,300 +1241,456 @@
             resultsDiv.innerHTML = html;
         }
 
-        // Allow Enter key to search
-        document.addEventListener('DOMContentLoaded', () => {
-            const searchInput = document.getElementById('search-input');
-            if (searchInput) {
-                searchInput.addEventListener('keypress', (e) => {
-                    if (e.key === 'Enter') {
-                        searchDocumentation();
-                    }
-                });
-            }
-            
-            const builtInSearchInput = document.getElementById('built-in-search-input');
-            if (builtInSearchInput) {
-                builtInSearchInput.addEventListener('keypress', (e) => {
-                    if (e.key === 'Enter') {
-                        searchBuiltInDocs();
-                    }
-                });
-            }
-            
-            // Load built-in documentation
-            ipcRenderer.send('get-built-in-docs');
-        });
-
-        let builtInDocs = null;
-        let currentSearchResults = null;
-
-        function searchBuiltInDocs() {
-            const query = document.getElementById('built-in-search-input').value.trim().toLowerCase();
-            const searchInfo = document.getElementById('search-info');
-            
-            if (!query) {
-                searchInfo.innerHTML = '<span class="pulse" style="color: #ff9800;">Enter a search term</span>';
-                return;
-            }
-            
-            if (!builtInDocs) {
-                searchInfo.innerHTML = '<span class="pulse" style="color: #f44336;">Documentation not loaded</span>';
-                return;
-            }
-            
-            // Show searching animation
-            searchInfo.innerHTML = '<span class="loading-spinner"></span>Searching...';
-            
-            // Simulate search delay for animation
-            setTimeout(() => {
-                performBuiltInSearch(query);
-            }, 300);
-        }
-
-        function performBuiltInSearch(query) {
-            const searchInfo = document.getElementById('search-info');
-            
-            // Search through all documentation items
-            const results = [];
-            Object.keys(builtInDocs.categories).forEach(categoryKey => {
-                const category = builtInDocs.categories[categoryKey];
-                category.items.forEach(item => {
-                    // Search in title, description, code, and tags
-                    const searchText = `${item.title} ${item.description} ${item.code} ${item.tags.join(' ')}`.toLowerCase();
-                    if (searchText.includes(query)) {
-                        results.push({
-                            ...item,
-                            categoryKey,
-                            categoryName: category.name,
-                            categoryIcon: category.icon
-                        });
-                    }
-                });
-            });
-            
-            currentSearchResults = results;
-            displayBuiltInSearchResults(results, query);
-        }
-
-        function displayBuiltInSearchResults(results, query) {
-            const categoriesDiv = document.getElementById('doc-categories');
-            const contentDiv = document.getElementById('doc-content');
-            const searchInfo = document.getElementById('search-info');
-            
-            if (results.length === 0) {
-                searchInfo.innerHTML = `<span style="color: #f44336;">No results found for "${query}"</span>`;
-                contentDiv.innerHTML = '<div class="no-results fade-in">No results found. Try different keywords.</div>';
-                return;
-            }
-            
-            searchInfo.innerHTML = `<span style="color: #4CAF50;">Found ${results.length} result${results.length !== 1 ? 's' : ''} for "${query}"</span>`;
-            
-            // Group results by category for sidebar
-            const categoryGroups = {};
-            results.forEach(result => {
-                if (!categoryGroups[result.categoryKey]) {
-                    categoryGroups[result.categoryKey] = {
-                        name: result.categoryName,
-                        icon: result.categoryIcon,
-                        count: 0
-                    };
-                }
-                categoryGroups[result.categoryKey].count++;
-            });
-            
-            // Update categories sidebar with animation
-            let categoriesHtml = '<div style="font-weight: bold; margin-bottom: 10px; color: #bb86fc;" class="slide-in">Search Results</div>';
-            Object.keys(categoryGroups).forEach(categoryKey => {
-                const group = categoryGroups[categoryKey];
-                categoriesHtml += `
-                    <div class="category-item fade-in" onclick="showCategoryResults('${categoryKey}')" style="animation-delay: 0.1s;">
-                        ${group.name} (${group.count})
-                    </div>
-                `;
-            });
-            categoriesDiv.innerHTML = categoriesHtml;
-            
-            // Display all results in content area with animation
-            let contentHtml = `<h3 class="slide-in">Search Results for "${query}"</h3>`;
-            results.forEach((item, index) => {
-                contentHtml += `
-                    <div class="code-example fade-in" style="animation-delay: ${index * 0.1}s;">
-                        <div class="code-header">
-                            <span class="code-title">${item.title}</span>
-                            <button class="copy-button" onclick="copyCode('${item.title.replace(/'/g, "\\'")}')">Copy</button>
-                        </div>
-                        <div class="code-description">${item.description}</div>
-                        <pre class="code-block" id="code-${item.title.replace(/\s+/g, '-').toLowerCase()}">${item.code}</pre>
-                        <div class="code-tags">
-                            <span class="tag">${item.categoryName}</span>
-                            ${item.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
-                        </div>
-                    </div>
-                `;
-            });
-            contentDiv.innerHTML = contentHtml;
-        }
-
-        function showCategoryResults(categoryKey) {
-            if (!currentSearchResults) return;
-            
-            const categoryResults = currentSearchResults.filter(item => item.categoryKey === categoryKey);
-            const category = builtInDocs.categories[categoryKey];
-            
-            // Update active category in sidebar
-            document.querySelectorAll('.category-item').forEach(item => item.classList.remove('active'));
-            event.target.classList.add('active');
-            
-            const contentDiv = document.getElementById('doc-content');
-            let html = `<h3 class="slide-in">${category.name} Results</h3>`;
-            categoryResults.forEach((item, index) => {
-                html += `
-                    <div class="code-example fade-in" style="animation-delay: ${index * 0.1}s;">
-                        <div class="code-header">
-                            <span class="code-title">${item.title}</span>
-                            <button class="copy-button" onclick="copyCode('${item.title.replace(/'/g, "\\'")}')">Copy</button>
-                        </div>
-                        <div class="code-description">${item.description}</div>
-                        <pre class="code-block" id="code-${item.title.replace(/\s+/g, '-').toLowerCase()}">${item.code}</pre>
-                        <div class="code-tags">
-                            ${item.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
-                        </div>
-                    </div>
-                `;
-            });
-            contentDiv.innerHTML = html;
-        }
-
-        function clearBuiltInSearch() {
-            document.getElementById('built-in-search-input').value = '';
-            document.getElementById('search-info').innerHTML = '';
-            currentSearchResults = null;
-            
-            if (builtInDocs) {
-                loadBuiltInDocs(builtInDocs);
-            }
-        }
-
-        function switchTab(tabName) {
-            // Remove active class from all tabs and content
-            document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
-            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
-            
-            // Add active class to selected tab and content
-            document.querySelector(`[onclick="switchTab('${tabName}')"]`).classList.add('active');
-            document.getElementById(`${tabName}-tab`).classList.add('active');
-        }
-
         function loadBuiltInDocs(docs) {
-            builtInDocs = docs;
             const categoriesDiv = document.getElementById('doc-categories');
+            const contentDiv = document.getElementById('doc-content');
             
-            let html = '';
-            Object.keys(docs.categories).forEach((key, index) => {
-                const category = docs.categories[key];
-                html += `
-                    <div class="category-item ${index === 0 ? 'active' : ''}" onclick="selectCategory('${key}')">
+            if (!docs || !docs.categories) {
+                categoriesDiv.innerHTML = '<div class="no-results">No built-in documentation available</div>';
+                return;
+            }
+
+            // Store docs globally for search
+            window.builtInDocsData = docs;
+
+            // category list
+            let categoriesHtml = '';
+            Object.keys(docs.categories).forEach((categoryKey, index) => {
+                const category = docs.categories[categoryKey];
+                categoriesHtml += `
+                    <div class="category-item" 
+                         onclick="showCategory('${categoryKey}')" 
+                         data-category="${categoryKey}">
                         ${category.name}
                     </div>
                 `;
             });
             
-            categoriesDiv.innerHTML = html;
+            categoriesDiv.innerHTML = categoriesHtml;
             
-            // Load first category by default
-            const firstKey = Object.keys(docs.categories)[0];
-            if (firstKey) {
-                selectCategory(firstKey);
+            // load first category when app loads
+            const firstCategory = Object.keys(docs.categories)[0];
+            if (firstCategory) {
+                setTimeout(() => showCategory(firstCategory), 100);
             }
         }
 
-        function selectCategory(categoryKey) {
-            // Update active category
-            document.querySelectorAll('.category-item').forEach(item => item.classList.remove('active'));
-            event.target.classList.add('active');
+        function showCategory(categoryKey) {
+            const docs = window.builtInDocsData;
+            if (!docs || !docs.categories[categoryKey]) return;
             
-            const category = builtInDocs.categories[categoryKey];
             const contentDiv = document.getElementById('doc-content');
+            const category = docs.categories[categoryKey];
             
-            let html = '';
-            category.items.forEach(item => {
-                html += `
+            // Update active category
+            document.querySelectorAll('.category-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            document.querySelector(`[data-category="${categoryKey}"]`).classList.add('active');
+            
+            // Build content
+            let contentHtml = `<h3 style="color: #bb86fc; margin-bottom: 20px;">${category.name}</h3>`;
+            
+            category.items.forEach((item, index) => {
+                const tagsHtml = item.tags ? item.tags.map(tag => `<span class="tag">${tag}</span>`).join('') : '';
+                contentHtml += `
                     <div class="code-example">
                         <div class="code-header">
-                            <span class="code-title">${item.title}</span>
-                            <button class="copy-button" onclick="copyCode('${item.title.replace(/'/g, "\\'")}')">Copy</button>
+                            <div class="code-title">${item.title}</div>
+                            <button class="copy-button" onclick="copyCodeExample(\`${item.code.replace(/`/g, '\\`').replace(/\$/g, '\\$')}\`, this)" title="Copy code">
+                                <span>📋</span> Copy
+                            </button>
                         </div>
                         <div class="code-description">${item.description}</div>
-                        <pre class="code-block" id="code-${item.title.replace(/\s+/g, '-').toLowerCase()}">${item.code}</pre>
-                        <div class="code-tags">
-                            ${item.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
-                        </div>
+                        <div class="code-block">${escapeHtml(item.code)}</div>
+                        <div class="code-tags">${tagsHtml}</div>
                     </div>
                 `;
             });
             
-            contentDiv.innerHTML = html;
+            contentDiv.innerHTML = contentHtml;
         }
 
-        function copyCode(title) {
-            const codeId = `code-${title.replace(/\s+/g, '-').toLowerCase()}`;
-            const codeElement = document.getElementById(codeId);
-            const copyButton = event.target;
+        function copyCodeExample(code, button) {
+            navigator.clipboard.writeText(code).then(() => {
+                const originalText = button.innerHTML;
+                button.innerHTML = '<span>✓</span> Copied!';
+                button.classList.add('copied');
+                
+                setTimeout(() => {
+                    button.innerHTML = originalText;
+                    button.classList.remove('copied');
+                }, 2000);
+            }).catch(err => {
+                console.error('Failed to copy code:', err);
+                const originalText = button.innerHTML;
+                button.innerHTML = '<span>❌</span> Failed';
+                button.style.color = '#f44336';
+                
+                setTimeout(() => {
+                    button.innerHTML = originalText;
+                    button.style.color = '';
+                }, 2000);
+            });
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function searchBuiltInDocs() {
+            const query = document.getElementById('built-in-search-input').value.trim().toLowerCase();
+            const searchInfo = document.getElementById('search-info');
             
-            if (codeElement) {
-                navigator.clipboard.writeText(codeElement.textContent).then(() => {
-                    copyButton.textContent = 'Copied!';
-                    copyButton.classList.add('copied');
+            if (!window.builtInDocsData) {
+                searchInfo.textContent = 'Documentation not loaded';
+                return;
+            }
+            
+            if (query.length === 0) {
+                // Show all categories when search is cleared
+                loadBuiltInDocs(window.builtInDocsData);
+                searchInfo.textContent = '';
+                return;
+            }
+            
+            // Search through all documentation
+            const results = [];
+            Object.keys(window.builtInDocsData.categories).forEach(categoryKey => {
+                const category = window.builtInDocsData.categories[categoryKey];
+                category.items.forEach(item => {
+                    const matches = 
+                        item.title.toLowerCase().includes(query) ||
+                        item.description.toLowerCase().includes(query) ||
+                        item.code.toLowerCase().includes(query) ||
+                        (item.tags && item.tags.some(tag => tag.toLowerCase().includes(query)));
                     
-                    setTimeout(() => {
-                        copyButton.textContent = 'Copy';
-                        copyButton.classList.remove('copied');
-                    }, 2000);
-                }).catch(err => {
-                    console.error('Failed to copy code:', err);
-                    alert('Failed to copy code to clipboard');
+                    if (matches) {
+                        results.push({
+                            ...item,
+                            categoryName: category.name,
+                            categoryKey: categoryKey
+                        });
+                    }
                 });
+            });
+            
+            // Update search info
+            searchInfo.textContent = `${results.length} result${results.length !== 1 ? 's' : ''} found`;
+            
+            // Display results
+            const contentDiv = document.getElementById('doc-content');
+            const categoriesDiv = document.getElementById('doc-categories');
+            
+            if (results.length === 0) {
+                contentDiv.innerHTML = '<div class="no-results">No results found for your search</div>';
+                return;
             }
+            
+            // Show search results in content area
+            let contentHtml = `<h3 style="color: #bb86fc; margin-bottom: 20px;">Search Results for "${query}"</h3>`;
+            
+            results.forEach((item, index) => {
+                const tagsHtml = item.tags ? item.tags.map(tag => `<span class="tag">${tag}</span>`).join('') : '';
+                contentHtml += `
+                    <div class="code-example">
+                        <div class="code-header">
+                            <div class="code-title">${item.title} <span style="font-size: 12px; color: #888;">(${item.categoryName})</span></div>
+                            <button class="copy-button" onclick="copyCodeExample(\`${item.code.replace(/`/g, '\\`').replace(/\$/g, '\\$')}\`, this)" title="Copy code">
+                                <span>📋</span> Copy
+                            </button>
+                        </div>
+                        <div class="code-description">${item.description}</div>
+                        <div class="code-block">${escapeHtml(item.code)}</div>
+                        <div class="code-tags">${tagsHtml}</div>
+                    </div>
+                `;
+            });
+            
+            contentDiv.innerHTML = contentHtml;
+            
+            // Clear category selection during search
+            document.querySelectorAll('.category-item').forEach(item => {
+                item.classList.remove('active');
+            });
         }
 
-        function saveTeamNumber() {
-            const teamNumber = document.getElementById('team-number').value;
-            if (teamNumber) {
-                ipcRenderer.send('save-team-number', teamNumber);
+        function clearBuiltInSearch() {
+            document.getElementById('built-in-search-input').value = '';
+            document.getElementById('search-info').textContent = '';
+            
+            // Reload the original built-in docs
+            if (window.builtInDocsData) {
+                loadBuiltInDocs(window.builtInDocsData);
             } else {
-                alert('Please enter a valid team number');
+                ipcRenderer.send('get-built-in-docs');
             }
         }
 
-        function loadTeamNumber() {
-            ipcRenderer.send('get-setting', 'teamNumber');
+        function switchTab(tabName) {
+            // update tab buttons
+            document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+            document.querySelector(`[onclick="switchTab('${tabName}')"]`).classList.add('active');
+            
+            // hide all tab content with animation
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.style.opacity = '0';
+                content.style.transform = 'translateY(10px)';
+                setTimeout(() => {
+                    content.classList.remove('active');
+                }, 150);
+            });
+            
+            // show selected tab content with animation
+            setTimeout(() => {
+                const targetTab = document.getElementById(`${tabName}-tab`);
+                targetTab.classList.add('active');
+                setTimeout(() => {
+                    targetTab.style.opacity = '1';
+                    targetTab.style.transform = 'translateY(0)';
+                }, 50);
+            }, 150);
+            
+            // load built-in docs if switching to that tab and not already loaded
+            if (tabName === 'built-in') {
+                const categoriesDiv = document.getElementById('doc-categories');
+                if (categoriesDiv.innerHTML.includes('Loading documentation')) {
+                    ipcRenderer.send('get-built-in-docs');
+                }
+            }
         }
 
-        function checkRobotConnection() {
-            const teamNumber = getTeamNumber();
-            if (teamNumber) {
-                const robotStatus = document.getElementById('robot-status');
-                robotStatus.innerHTML = '</span>Robot Status: Checking multiple addresses...';
-                robotStatus.style.color = '#ff9800'; // Orange
-                robotStatus.classList.add('pulse');
-                ipcRenderer.send('ping-roborio', teamNumber);
+        // Global variables
+        let builtInDocs = null;
+        let currentSearchResults = null;
+        let currentRobotMode = 'teleop';
+        let robotEnabled = false;
+        let logAutoScroll = true;
+
+        // Robot control functions
+        function enableRobot() {
+            robotEnabled = true;
+            updateRobotStateStatus();
+            addLogEntry('Robot enabled', 'info');
+            ipcRenderer.send('robot-enable');
+        }
+
+        function disableRobot() {
+            robotEnabled = false;
+            updateRobotStateStatus();
+            addLogEntry('Robot disabled', 'warning');
+            ipcRenderer.send('robot-disable');
+        }
+
+        function setMode(mode) {
+            currentRobotMode = mode;
+            
+            // update button states
+            document.querySelectorAll('.mode-button').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(`${mode}-btn`).classList.add('active');
+            
+            // update status
+            const modeStatus = document.getElementById('mode-status');
+            const modeNames = { teleop: 'Teleop', auto: 'Autonomous', test: 'Test' };
+            modeStatus.textContent = `Current mode: ${modeNames[mode]}`;
+            
+            addLogEntry(`Switched to ${modeNames[mode]} mode`, 'info');
+            ipcRenderer.send('robot-mode-change', mode);
+        }
+
+        function changeProtocolYear() {
+            const year = document.getElementById('protocol-year').value;
+            addLogEntry(`Protocol year changed to ${year}`, 'info');
+            ipcRenderer.send('robot-protocol-year', year);
+        }
+
+        // robot connection functions
+        function connectToRobot() {
+            const robotIP = document.getElementById('robot-ip').value.trim();
+            if (!robotIP) {
+                addLogEntry('Please enter a robot IP address', 'error');
+                return;
+            }
+            
+            addLogEntry(`Attempting to connect to ${robotIP}...`, 'info');
+            ipcRenderer.send('robot-connect', robotIP);
+            
+            // update ui
+            document.getElementById('connect-btn').disabled = true;
+            document.getElementById('connection-text').textContent = 'Connecting...';
+        }
+
+        function disconnectFromRobot() {
+            addLogEntry('Disconnecting from robot...', 'info');
+            ipcRenderer.send('robot-disconnect');
+            
+            // update ui
+            document.getElementById('disconnect-btn').disabled = true;
+        }
+
+        function emergencyStop() {
+            if (confirm('Are you sure you want to trigger an emergency stop? This will immediately disable the robot.')) {
+                addLogEntry('EMERGENCY STOP ACTIVATED', 'error');
+                ipcRenderer.send('robot-emergency-stop');
+            }
+        }
+
+        // controller functions
+        let selectedController = null;
+        let controllerStates = new Map();
+
+        function refreshControllers() {
+            if (controllerManager) {
+                updateControllerList(controllerManager.getConnectedControllers());
+                addLogEntry('Controller list refreshed', 'info');
             } else {
-                const robotStatus = document.getElementById('robot-status');
-                robotStatus.textContent = 'Robot Status: No team number set';
-                robotStatus.style.color = '#757575'; // Gray
-                robotStatus.classList.remove('pulse');
+                addLogEntry('Controller system not initialized', 'warning');
             }
         }
 
-        function getTeamNumber() {
-            return document.getElementById('team-number').value;
+        function selectController() {
+            const select = document.getElementById('controller-select');
+            selectedController = select.value ? parseInt(select.value) : null;
+            
+            if (selectedController !== null) {
+                addLogEntry(`Selected controller: ${select.options[select.selectedIndex].text}`, 'info');
+            } else {
+                addLogEntry('No controller selected', 'warning');
+            }
         }
 
-        // Updater functions
+        function updateDeadzone() {
+            const slider = document.getElementById('deadzone-slider');
+            const value = parseFloat(slider.value);
+            document.getElementById('deadzone-value').textContent = value.toFixed(2);
+            
+            if (controllerManager) {
+                controllerManager.setDeadzone(value);
+                addLogEntry(`Controller deadzone set to ${value.toFixed(2)}`, 'info');
+            }
+        }
+
+        function testControllerVibration() {
+            if (selectedController !== null && controllerManager) {
+                const success = controllerManager.vibrate(selectedController, 0.5, 0.5, 500);
+                if (success) {
+                    addLogEntry('Testing controller vibration...', 'info');
+                } else {
+                    addLogEntry('Controller vibration not supported', 'warning');
+                }
+            } else {
+                addLogEntry('No controller selected for vibration test', 'warning');
+            }
+        }
+
+        function updateControllerDisplay(controllerId, state) {
+            if (controllerId !== selectedController) return;
+            
+            // update axes display
+            const axesDiv = document.getElementById('axes-values');
+            let axesHtml = '';
+            for (let i = 0; i < Math.min(state.axes.length, 8); i++) {
+                const value = state.axes[i].toFixed(3);
+                axesHtml += `Axis ${i}: ${value.padStart(7)}\n`;
+            }
+            axesDiv.textContent = axesHtml;
+            
+            // update button display
+            const buttonsDiv = document.getElementById('button-values');
+            let buttonsHtml = '';
+            for (let i = 0; i < 16; i++) {
+                const pressed = !!(state.buttons & (1 << i));
+                buttonsHtml += `Btn ${i.toString().padStart(2)}: ${pressed ? 'ON ' : 'OFF'} `;
+                if ((i + 1) % 4 === 0) buttonsHtml += '\n';
+            }
+            buttonsDiv.textContent = buttonsHtml;
+        }
+
+        function updateControllerList(controllers) {
+            const select = document.getElementById('controller-select');
+            select.innerHTML = '';
+            
+            if (controllers.length === 0) {
+                select.innerHTML = '<option value="">No controllers detected</option>';
+                selectedController = null;
+            } else {
+                controllers.forEach((controller, index) => {
+                    const option = document.createElement('option');
+                    option.value = controller.id;
+                    option.textContent = `${controller.name} (ID: ${controller.id})`;
+                    select.appendChild(option);
+                });
+                
+                // select controller
+                if (selectedController === null && controllers.length > 0) {
+                    selectedController = controllers[0].id;
+                    select.value = selectedController;
+                }
+            }
+        }
+
+        // Robot logging functions
+        function addLogEntry(message, type = 'info') {
+            const logDiv = document.getElementById('robot-log');
+            if (!logDiv) return;
+            
+            const timestamp = new Date().toLocaleTimeString();
+            const entry = document.createElement('div');
+            entry.className = `log-entry log-${type}`;
+            entry.innerHTML = `<span class="log-timestamp">[${timestamp}]</span> ${message}`;
+            
+            logDiv.appendChild(entry);
+            
+            // auto-scroll if enabled
+            if (logAutoScroll) {
+                logDiv.scrollTop = logDiv.scrollHeight;
+            }
+            
+            // limit log entries to prevent memory issues
+            const entries = logDiv.querySelectorAll('.log-entry');
+            if (entries.length > 100) {
+                entries[0].remove();
+            }
+        }
+
+        function clearRobotLog() {
+            const logDiv = document.getElementById('robot-log');
+            if (logDiv) {
+                logDiv.innerHTML = '';
+                addLogEntry('Log cleared', 'info');
+            }
+        }
+
+        function toggleLogAutoScroll() {
+            logAutoScroll = !logAutoScroll;
+            const btn = document.getElementById('autoscroll-btn');
+            if (btn) {
+                btn.textContent = `Auto-scroll: ${logAutoScroll ? 'ON' : 'OFF'}`;
+            }
+        }
+
+        function updateRobotStateStatus() {
+            const stateDot = document.getElementById('state-dot');
+            const stateText = document.getElementById('robot-state-text');
+            
+            if (stateDot && stateText) {
+                if (robotEnabled) {
+                    stateDot.className = 'state-dot enabled';
+                    stateText.textContent = 'Enabled';
+                } else {
+                    stateDot.className = 'state-dot disabled';
+                    stateText.textContent = 'Disabled';
+                }
+            }
+        }
+
+        // Update and settings functions
         function checkForUpdates() {
             const statusDiv = document.getElementById('update-status');
             
-            // Show checking status immediately
+            // show checking status
             statusDiv.innerHTML = '<span class="loading-spinner"></span>Checking for updates...';
             statusDiv.style.color = '#bb86fc';
             statusDiv.classList.add('pulse');
@@ -821,12 +1722,97 @@
             `;
         }
 
-        // IPC event handlers
-        ipcRenderer.on('setting-value', (event, { key, value }) => {
-            if (key === 'teamNumber' && value) {
-                document.getElementById('team-number').value = value;
-                setTimeout(checkRobotConnection, 1000);
+        function saveTeamNumber() {
+            const teamNumber = document.getElementById('team-number').value;
+            if (teamNumber) {
+                // autofill ip
+                const teamStr = teamNumber.toString().padStart(4, '0');
+                const robotIP = `10.${teamStr.substring(0, 2)}.${teamStr.substring(2, 4)}.2`;
+                document.getElementById('robot-ip').value = robotIP;
+                
+                ipcRenderer.send('save-team-number', teamNumber);
+            } else {
+                alert('Please enter a valid team number');
             }
+        }
+
+        function loadTeamNumber() {
+            ipcRenderer.send('get-setting', 'teamNumber');
+        }
+
+        function checkRobotConnection() {
+            const teamNumber = getTeamNumber();
+            if (teamNumber) {
+                const robotStatus = document.getElementById('robot-status');
+                robotStatus.innerHTML = 'Robot Status: Checking multiple addresses...';
+                robotStatus.style.color = '#ff9800'; // orange
+                robotStatus.classList.add('pulse');
+                ipcRenderer.send('ping-roborio', teamNumber);
+            } else {
+                const robotStatus = document.getElementById('robot-status');
+                robotStatus.textContent = 'Robot Status: No team number set';
+                robotStatus.style.color = '#757575'; // gray not grey
+                robotStatus.classList.remove('pulse');
+            }
+        }
+
+        function getTeamNumber() {
+            return document.getElementById('team-number').value;
+        }
+
+        function updateRobotConnectionStatus(status) {
+            const indicator = document.getElementById('connection-indicator');
+            const text = document.getElementById('connection-text');
+            const connectBtn = document.getElementById('connect-btn');
+            const disconnectBtn = document.getElementById('disconnect-btn');
+            
+            if (status.connected) {
+                indicator.className = 'status-indicator connected';
+                text.textContent = 'Connected';
+                connectBtn.disabled = true;
+                disconnectBtn.disabled = false;
+            } else {
+                indicator.className = 'status-indicator disconnected';
+                text.textContent = 'Disconnected';
+                connectBtn.disabled = false;
+                disconnectBtn.disabled = true;
+            }
+            
+            // update robot state
+            robotEnabled = status.enabled;
+            currentRobotMode = status.mode;
+            updateRobotStateStatus();
+            
+            // update mode buttons
+            document.querySelectorAll('.mode-button').forEach(btn => btn.classList.remove('active'));
+            const activeBtn = document.getElementById(`${status.mode}-btn`);
+            if (activeBtn) activeBtn.classList.add('active');
+        }
+
+        function updateTelemetryDisplay(telemetry) {
+            if (telemetry.batteryVoltage !== undefined) {
+                document.getElementById('battery-voltage').textContent = `${telemetry.batteryVoltage.toFixed(1)}V`;
+            }
+            if (telemetry.wifiSignal !== undefined) {
+                document.getElementById('wifi-signal').textContent = `${telemetry.wifiSignal} dB`;
+            }
+            if (telemetry.canUtilization !== undefined) {
+                document.getElementById('can-utilization').textContent = `${telemetry.canUtilization}%`;
+            }
+            if (telemetry.wifiBandwidth !== undefined) {
+                document.getElementById('wifi-bandwidth').textContent = `${telemetry.wifiBandwidth.toFixed(1)} MB/s`;
+            }
+        }
+
+        // IPC Event Handlers
+        ipcRenderer.on('built-in-docs-loaded', (event, docs) => {
+            console.log('Built-in docs loaded:', docs);
+            loadBuiltInDocs(docs);
+        });
+
+        ipcRenderer.on('built-in-docs-error', (event, error) => {
+            console.error('Built-in docs error:', error);
+            document.getElementById('doc-categories').innerHTML = `<div class="no-results">Error loading docs: ${error}</div>`;
         });
 
         ipcRenderer.on('documentation-results', (event, data) => {
@@ -840,12 +1826,15 @@
             }
         });
 
-        ipcRenderer.on('built-in-docs-loaded', (event, docs) => {
-            loadBuiltInDocs(docs);
-        });
-
-        ipcRenderer.on('built-in-docs-error', (event, error) => {
-            document.getElementById('doc-categories').innerHTML = `<div class="no-results">Error loading docs: ${error}</div>`;
+        ipcRenderer.on('setting-value', (event, { key, value }) => {
+            if (key === 'teamNumber' && value) {
+                document.getElementById('team-number').value = value;
+                const teamStr = value.toString().padStart(4, '0');
+                const robotIP = `10.${teamStr.substring(0, 2)}.${teamStr.substring(2, 4)}.2`;
+                document.getElementById('robot-ip').value = robotIP;
+                
+                setTimeout(checkRobotConnection, 1000);
+            }
         });
 
         ipcRenderer.on('setting-saved', (event, { key, success, error }) => {
@@ -864,7 +1853,7 @@
         });
 
         ipcRenderer.on('update-available', (event, updateInfo) => {
-            // Clear the checking status
+            // clear status
             const statusDiv = document.getElementById('update-status');
             statusDiv.classList.remove('pulse');
             statusDiv.innerHTML = '';
@@ -880,7 +1869,7 @@
             statusDiv.style.color = '#4CAF50';
             statusDiv.classList.add('fade-in');
             
-            // Clear the message after 3 seconds
+            // clear msg
             setTimeout(() => {
                 statusDiv.innerHTML = '';
                 statusDiv.classList.remove('fade-in');
@@ -895,7 +1884,7 @@
             statusDiv.style.color = '#f44336';
             statusDiv.classList.add('fade-in');
             
-            // Clear the message after 5 seconds
+            // clear msg
             setTimeout(() => {
                 statusDiv.innerHTML = '';
                 statusDiv.classList.remove('fade-in');
@@ -929,22 +1918,72 @@
             
             if (status.connected) {
                 robotStatus.innerHTML = `Robot Status: Connected to ${status.address}`;
-                robotStatus.style.color = '#4CAF50'; // Green
+                robotStatus.style.color = '#4CAF50'; // green
                 robotStatus.classList.add('fade-in');
+                addLogEntry(`Connected to robot at ${status.address}`, 'info');
             } else {
                 robotStatus.innerHTML = `Robot Status: Disconnected`;
-                robotStatus.style.color = '#f44336'; // Red
+                robotStatus.style.color = '#f44336'; // red
                 robotStatus.classList.add('fade-in');
+                addLogEntry(`Robot connection lost: ${status.error || 'Unknown error'}`, 'error');
             }
         });
 
-        setInterval(() => {
-            if (getTeamNumber()) {
-                checkRobotConnection();
-            }
-        }, 30000);
+        ipcRenderer.on('robot-state-update', (event, status) => {
+            updateRobotConnectionStatus(status);
+        });
 
-        loadTeamNumber();
+        ipcRenderer.on('robot-telemetry', (event, telemetry) => {
+            updateTelemetryDisplay(telemetry);
+        });
+
+        ipcRenderer.on('robot-log', (event, logData) => {
+            addLogEntry(logData.message, logData.type || 'info');
+        });
+
+        // initialize page when DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            // set up built-in search
+            const builtInSearchInput = document.getElementById('built-in-search-input');
+            if (builtInSearchInput) {
+                builtInSearchInput.addEventListener('keyup', (e) => {
+                    searchBuiltInDocs();
+                });
+                builtInSearchInput.addEventListener('input', (e) => {
+                    searchBuiltInDocs();
+                });
+            }
+
+            // set up external search
+            const searchInput = document.getElementById('search-input');
+            if (searchInput) {
+                searchInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        searchDocumentation();
+                    }
+                });
+            }
+            
+            // load built-in documentation on startup
+            ipcRenderer.send('get-built-in-docs');
+            
+            // initialize robot control state
+            updateRobotStateStatus();
+            addLogEntry('Robot control interface loaded', 'info');
+            
+            // load team number and initialize other systems
+            loadTeamNumber();
+            
+            // initialize controller system
+            setTimeout(() => {
+                initializeControllerSystem();
+            }, 500);
+            
+            // request initial robot status
+            setTimeout(() => {
+                ipcRenderer.send('get-robot-status');
+            }, 1000);
+        });
     </script>
 </body>
 </html>
