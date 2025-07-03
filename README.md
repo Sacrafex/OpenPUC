@@ -205,4 +205,8 @@ For questions, issues, or contributions:
 
 ## Acknowledgments
 
+<<<<<<< HEAD
 Built for the FRC community to streamline robot development and provide quick access to essential programming resources. Special thanks to the WPILib team and FRC mentors who make robotics education possible.
+=======
+Built for the FRC community to streamline robot development and provide quick access to essential programming resources. Special thanks to the WPILib team and FRC mentors who make robotics education possible.
+>>>>>>> bb5621fcc96cf1001dbf74b4a21050975dd34463
